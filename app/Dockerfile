@@ -17,4 +17,5 @@ WORKDIR /srv
 # https://python-poetry.org/docs/basic-usage/#installing-dependencies
 RUN poetry install
 # Run the application.
-CMD ["cron", "-f"]
+CMD ["poetry", "run", "python", "-m", "api"]
+# CMD ["cron", "-f"]
