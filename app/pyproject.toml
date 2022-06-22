@@ -6,6 +6,7 @@ authors = ["Nava Engineering <engineering@navapbc.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+connexion = {extras = ["swagger-ui"], version = "^2.13.1"}
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
