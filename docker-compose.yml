@@ -8,3 +8,6 @@ services:
     # This service relies on building from a Dockerfile in this file directory,
     # not on an image repository.
     build: ./app
+    # Mount application directory for local development.
+    volumes:
+      - ./app:/srv
