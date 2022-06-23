@@ -3,8 +3,6 @@
 FROM python:3-slim
 # Keep container packages up-to-date.
 RUN apt update \
-    && apt install --yes --no-install-recommends \
-        cron \
     && apt upgrade --yes
 # Install poetry, the package manager.
 # https://python-poetry.org
