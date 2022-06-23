@@ -8,13 +8,17 @@
 import connexion
 import os
 
+
 def main():
     options = {"swagger_url": "/docs"}
     app = connexion.FlaskApp(__name__, specification_dir=get_project_root_dir(), options=options)
     app.add_api('openapi.yml', strict_validation=True, validate_responses=True)
+    # app.add_api('openapi.yml', validate_responses=True)
     app.run(port=8080)
+
 
 def get_project_root_dir() -> str:
     return os.path.join(os.path.dirname(__file__), "..")
+
 
 main()

@@ -18,4 +18,3 @@ WORKDIR /srv
 RUN poetry install
 # Run the application.
 CMD ["poetry", "run", "python", "-m", "api"]
-# CMD ["cron", "-f"]

@@ -12,13 +12,11 @@ paths:
   /healthcheck:
     get:
       summary: Healthcheck for the API
+      operationId: api.api.healthcheck_get
       responses:
         "200":
           description: Success
           content:
             application/json:
-              # @TODO fix. Create a nonsense schema temporarily.
               schema:
-                type: integer
-                minimum: 1
-                maximum: 100
+                type: boolean

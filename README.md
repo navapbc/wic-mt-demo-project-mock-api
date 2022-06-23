@@ -13,4 +13,5 @@ How to run:
 1. In your terminal, `cd` to this repo.
 2. Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed & running.
 3. Run `docker-compose up -d --build` to build the image and start the container.
-4. Run `docker-compose down` when you are done to delete the container.
+4. Navigate to `localhost:8080/v1/docs` to access the Swagger UI.
+5. Run `docker-compose down` when you are done to delete the container.
