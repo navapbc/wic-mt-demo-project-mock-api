@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: WIC MT Demo Project Mock API
+  description: A Mock API wrapper around the SPIRIT MIS for the Special Supplemental Nutrition Program for Women, Infants, and Children (WIC)
+  version: "2022-06-21"
+
+servers:
+  - url: /v1
+    description: Development server
+
+paths:
+  /healthcheck:
+    get:
+      summary: Healthcheck for the API
+      operationId: api.api.healthcheck_get
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: boolean
