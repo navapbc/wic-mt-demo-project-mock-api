@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - app/**
-# this workflow can't be updated/merged until WMDP-123. etc are merged
+# this workflow should be updated/merged when WMDP-123. etc are merged
 jobs:
   lint:
     runs-on: ubuntu-latest
