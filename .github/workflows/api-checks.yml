@@ -1,4 +1,4 @@
-name: Mock API CI
+name: Mock API Checks
 
 on:
   push:
