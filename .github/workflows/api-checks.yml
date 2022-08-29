@@ -1,0 +1,38 @@
+name: Mock API Checks
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - app/**
+# this workflow should be updated/merged when WMDP-123. etc are merged
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run Linting
+        run: |
+          echo "Placeholder until linting is installed"
+          exit 0
+  security:
+    runs-on: ubutntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Security Check
+        run: |
+          echo "Placeholder until security tools are installed"
+          exit 0
+  test:
+    needs: [lint, security]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Start tests
+        run: |
+          echo "Placeholder until tests are written"
+          exit 0
