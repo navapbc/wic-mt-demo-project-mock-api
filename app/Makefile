@@ -6,16 +6,19 @@ run:
 run-logs:
 	docker-compose up --build
 
+test:
+	$(PY_RUN_CMD) pytest $(args)
+
 format:
-	$(PY_RUN_CMD) isort --atomic api
-	$(PY_RUN_CMD) black api
+	$(PY_RUN_CMD) isort --atomic api tests
+	$(PY_RUN_CMD) black api tests
 
 lint: lint-spectral lint-py
 
 lint-py: lint-flake lint-mypy lint-poetry-version
 
 lint-flake:
-	$(PY_RUN_CMD) flake8 api
+	$(PY_RUN_CMD) flake8 api tests
 
 lint-mypy:
 	$(PY_RUN_CMD) mypy --show-error-codes api

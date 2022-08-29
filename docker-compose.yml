@@ -14,3 +14,7 @@ services:
     # Mount application directory for local development.
     volumes:
       - ./app:/srv
+
+    environment:
+      - ENVIRONMENT=local
+      - PYTHONPATH=/app/

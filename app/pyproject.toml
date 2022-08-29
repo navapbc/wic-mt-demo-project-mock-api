@@ -8,9 +8,10 @@ authors = ["Nava Engineering <engineering@navapbc.com>"]
 python = "^3.10"
 connexion = {extras = ["swagger-ui"], version = "^2.13.1"}
 SQLAlchemy = "^1.4.40"
+Faker = "^14.1.0"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2"
+pytest = "^6.0.0"
 black = "^22.6.0"
 flake8 = "^5.0.4"
 flake8-bugbear = "^22.8.23"
