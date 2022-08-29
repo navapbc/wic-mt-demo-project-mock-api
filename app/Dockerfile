@@ -7,10 +7,18 @@ RUN apt update \
 # Install poetry, the package manager.
 # https://python-poetry.org
 RUN pip install poetry
-# Copy application files.
-COPY . /srv
+
+
 # Set the application working directory.
 WORKDIR /srv
+
+COPY pyproject.toml poetry.lock ./
+RUN poetry config virtualenvs.in-project false && poetry env use python
+RUN poetry install --no-root
+
+# Copy application files.
+COPY . /srv
+
 # Install application dependencies.
 # https://python-poetry.org/docs/basic-usage/#installing-dependencies
 RUN poetry install
