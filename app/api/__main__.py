@@ -9,11 +9,14 @@ import os
 
 import api.app
 import api.logging
+from api.util.local import load_local_env_vars
 
 logger = api.logging.get_logger(__package__)
 
 
 def main():
+    load_local_env_vars()
+
     # TODO - can use a pydantic config to get this instead
     environment = os.environ.get("ENVIRONMENT", "unknown")
     is_local = environment == "local"

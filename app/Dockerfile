@@ -4,6 +4,7 @@ FROM python:3-slim
 # Keep container packages up-to-date.
 RUN apt update \
     && apt upgrade --yes
+RUN apt-get install --no-install-recommends --yes postgresql libpq-dev
 # Install poetry, the package manager.
 # https://python-poetry.org
 RUN pip install poetry

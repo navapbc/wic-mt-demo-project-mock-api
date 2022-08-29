@@ -3,18 +3,54 @@
 version: '3'
 
 services:
+
+  mock-api-db:
+    image: postgres:14-alpine
+    container_name: "mock-api-db"
+    platform: linux/amd64 # Fix running on Apple silicon 
+    ports:
+      - "5432:5432"
+    # Docs for options to the postgres server command:
+    # https://www.postgresql.org/docs/current/app-postgres.html
+    command: postgres -c "log_lock_waits=on" -N 1000 -c "fsync=off"
+    env_file:
+      ./app/local.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      main:
+        aliases:
+          - mock-api-db
+
   # Define one service for the application.
   app:
     # This service relies on building from a Dockerfile in this file directory,
     # not on an image repository.
     build: ./app
     # Expose the application port for local development.
+    platform: linux/amd64 # Fix running on Apple silicon 
     ports:
       - 8080:8080
     # Mount application directory for local development.
     volumes:
       - ./app:/srv
 
-    environment:
-      - ENVIRONMENT=local
-      - PYTHONPATH=/app/
+    links:
+      - mock-api-db
+
+    env_file:
+      ./app/local.env
+
+    networks:
+      main:
+        aliases:
+          - app
+    depends_on:
+      - "mock-api-db"
+
+
+networks:
+  main:
+
+volumes:
+  pgdata:

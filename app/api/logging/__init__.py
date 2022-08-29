@@ -78,6 +78,9 @@ class DevelopFormatter(logging.Formatter):  # noqa: B1
 
 
 def init(program_name, develop=False):
+    for k, v in os.environ.items():
+        print(k, v)
+
     logging_config: dict = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -132,7 +135,7 @@ def init(program_name, develop=False):
 
 
 def get_logger(name):
-    """Return a logger with the specified name, which must be a massgov module name."""
+    """Return a logger with the specified name."""
     # TODO
     return logging.getLogger(name)
 
