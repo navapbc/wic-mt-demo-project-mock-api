@@ -6,7 +6,11 @@ APP_NAME := app
 
 # Adding this to the end of a script that outputs JSON will convert
 # it to a readable format with timestamps and color-coding.
-DECODE_LOG := | python3 -u api/logging/decodelog.py
+# TODO - investigate if there's a simple/reasonable configurational
+# approach to just have the logs output in this manner to begin
+# they are ~almost there but there's a few pieces missing that I
+# want to circle back around on later.
+DECODE_LOG := 2>&1 | python3 -u api/logging/decodelog.py
 
 # A few commands need adjustments if they're run in CI, specify those here
 # TODO - when CI gets hooked up, actually test this.
@@ -51,13 +55,13 @@ start-db:
 	docker-compose up --detach mock-api-db
 
 db-upgrade: ## Apply pending migrations to db
-	$(PY_RUN_CMD) db-migrate-up
+	$(PY_RUN_CMD) db-migrate-up $(DECODE_LOG)
 
 db-downgrade: ## Rollback last migration in db
-	$(PY_RUN_CMD) db-migrate-down
+	$(PY_RUN_CMD) db-migrate-down $(DECODE_LOG)
 
 db-downgrade-all: ## Rollback all migrations
-	$(PY_RUN_CMD) db-migrate-down-all
+	$(PY_RUN_CMD) db-migrate-down-all $(DECODE_LOG)
 
 check-migrate-msg:
 ifndef MIGRATE_MSG
@@ -66,6 +70,8 @@ endif
 
 db-migrate-create: check-migrate-msg
 	$(alembic_cmd) revision --autogenerate -m "$(MIGRATE_MSG)"
+
+init-db: start-db db-upgrade
 
 #########################
 # Testing
@@ -88,7 +94,6 @@ lint-py: lint-flake lint-mypy lint-poetry-version
 
 lint-flake:
 	$(PY_RUN_CMD) flake8 --format=$(FLAKE8_FORMAT) api tests
-
 
 lint-mypy:
 	$(PY_RUN_CMD) mypy --show-error-codes $(MYPY_FLAGS) api $(MYPY_POSTPROC)

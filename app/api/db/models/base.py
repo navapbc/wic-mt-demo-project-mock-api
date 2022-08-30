@@ -1,7 +1,6 @@
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any
 from uuid import UUID
 
 from sqlalchemy import TIMESTAMP, Column, inspect
@@ -14,6 +13,7 @@ from api.util.datetime_util import utcnow
 
 def same_as_created_at(context):
     return context.get_current_parameters()["created_at"]
+
 
 @as_declarative()
 class Base:
@@ -47,7 +47,7 @@ class Base:
         ]
         data = {c: getattr(self, c) for c in non_pk_columns}
         data.update(kwargs)
-        copy = self.__class__(**data)  # type: ignore
+        copy = self.__class__(**data)
         return copy
 
 
@@ -58,6 +58,7 @@ def uuid_gen() -> uuid.UUID:
 def utc_timestamp_gen():
     """Generate a tz-aware timestamp pinned to UTC"""
     return utcnow()
+
 
 @declarative_mixin
 # This is annotated as a @declarative_mixin when we upgrade to SQLAlchemy 1.4

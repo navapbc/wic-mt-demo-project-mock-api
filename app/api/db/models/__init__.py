@@ -1,1 +1,1 @@
-from . import eligibility_models # noqa: F401
+from . import eligibility_models  # noqa: F401

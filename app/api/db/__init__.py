@@ -1,22 +1,20 @@
-
-
-from dataclasses import dataclass
-import json
-from typing import Optional, Any, Generator
-from api.db.migrations.run import have_all_migrations_run
-from contextlib import contextmanager
-
 import os
 import urllib.parse
+from contextlib import contextmanager
+from dataclasses import dataclass
+from typing import Any, Generator, Optional
+
 import psycopg2
+import sqlalchemy.pool as pool
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
-import sqlalchemy.pool as pool
-from sqlalchemy.orm import scoped_session, sessionmaker, Session
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 import api.logging
+from api.db.migrations.run import have_all_migrations_run
 
 logger = api.logging.get_logger(__name__)
+
 
 @dataclass
 class DbConfig:
@@ -28,27 +26,13 @@ class DbConfig:
     port: str
     hide_sql_parameter_logs: bool = True
 
-def get_db_config(prefer_admin: bool = False) -> DbConfig:
-    print(prefer_admin)
-    """ TODO - figure this out
-    if not prefer_admin:
-        username = os.getenv("DB_ADMIN_USERNAME", None)
-        password = os.getenv("DB_ADMIN_PASSWORD", None)
-    else:
-    """
-    username = os.getenv("POSTGRES_USER", None)
-    password = os.getenv("POSTGRES_PASSWORD", None)
 
-    print("````````````````````````")
-    print(password)
-    print("````````````````````````")
-
-
+def get_db_config() -> DbConfig:
     db_config = DbConfig(
         host=os.getenv("DB_HOST", "localhost"),
         name=os.getenv("POSTGRES_DB", "mock-api"),
-        username=username,
-        password=password,
+        username=os.getenv("POSTGRES_USER", "mock_api_user"),
+        password=os.getenv("POSTGRES_PASSWORD"),
         schema=os.getenv("DB_SCHEMA", "public"),
         port=os.getenv("DB_PORT", "5432"),
     )
@@ -68,13 +52,16 @@ def get_db_config(prefer_admin: bool = False) -> DbConfig:
 
     return db_config
 
-def init(config: Optional[DbConfig] = None, check_migrations_current: bool = False) -> scoped_session:
+
+def init(
+    config: Optional[DbConfig] = None, check_migrations_current: bool = False
+) -> scoped_session:
     logger.info("connecting to postgres db")
 
     engine = create_db_engine(config)
     conn = engine.connect()
 
-    conn_info = conn.connection.connection.info
+    conn_info = conn.connection.dbapi_connection.info  # type: ignore
     logger.info(
         "connected to postgres db",
         extra={
@@ -106,11 +93,8 @@ def init(config: Optional[DbConfig] = None, check_migrations_current: bool = Fal
     return session_factory
 
 
-
 def verify_ssl(connection_info):
-    """Verify that the database connection is encrypted and log a warning if not.
-
-    TODO: raise a RuntimeError if not."""
+    """Verify that the database connection is encrypted and log a warning if not."""
     if connection_info.ssl_in_use:
         logger.info(
             "database connection is using SSL: %s",
@@ -121,6 +105,7 @@ def verify_ssl(connection_info):
         )
     else:
         logger.warning("database connection is not using SSL")
+
 
 def create_db_engine(config: Optional[DbConfig] = None) -> Engine:
     db_config: DbConfig = config if config is not None else get_db_config()
@@ -152,6 +137,7 @@ def create_db_engine(config: Optional[DbConfig] = None) -> Engine:
         # json_serializer=lambda o: json.dumps(o, default=pydantic.json.pydantic_encoder),
     )
 
+
 def get_connection_parameters(db_config: DbConfig) -> dict[str, Any]:
     connect_args = {}
     environment = os.getenv("ENVIRONMENT")
@@ -172,8 +158,11 @@ def get_connection_parameters(db_config: DbConfig) -> dict[str, Any]:
         **connect_args,
     )
 
+
 @contextmanager
-def session_scope(session: Session, close: bool = False) -> Generator[Session, None, None]:
+def session_scope(
+    session: scoped_session, close: bool = False
+) -> Generator[scoped_session, None, None]:
     """Provide a transactional scope around a series of operations.
 
     See https://docs.sqlalchemy.org/en/13/orm/session_basics.html#when-do-i-construct-a-session-when-do-i-commit-it-and-when-do-i-close-it
@@ -188,6 +177,7 @@ def session_scope(session: Session, close: bool = False) -> Generator[Session, N
     finally:
         if close:
             session.close()
+
 
 def make_connection_uri(config: DbConfig) -> str:
     """Construct PostgreSQL connection URI

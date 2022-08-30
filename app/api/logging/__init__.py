@@ -1,13 +1,11 @@
-import datetime
-import logging
 import json
+import logging
 import logging.config
 import os
 import platform
 import pwd
 import sys
 from typing import Any, cast
-
 
 # Attributes of LogRecord to exclude from the JSON formatted lines. An exclusion list approach is
 # used so that all "extra" attributes can be included in a line.
@@ -26,7 +24,6 @@ EXCLUDE_ATTRIBUTES = {
 }
 
 
-
 class JsonFormatter(logging.Formatter):  # noqa: B1
     """A logging formatter which formats each line as JSON."""
 
@@ -43,9 +40,6 @@ class JsonFormatter(logging.Formatter):  # noqa: B1
 
 
 def init(program_name):
-    for k, v in os.environ.items():
-        print(k, v)
-
     logging_config: dict = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -99,7 +93,6 @@ def init(program_name):
 
 def get_logger(name):
     """Return a logger with the specified name."""
-    # TODO
     return logging.getLogger(name)
 
 

@@ -10,9 +10,7 @@ class ValidationErrorDetail:
     message: str = ""
     rule: Optional[str] = None  # Also an enum in Mass
     field: Optional[str] = None
-    value: Optional[
-        str
-    ] = None  # Do not store PII data here, as it gets logged in some cases
+    value: Optional[str] = None  # Do not store PII data here, as it gets logged in some cases
 
 
 @dataclass
@@ -54,6 +52,4 @@ def success_response(
     warnings: Optional[list[ValidationErrorDetail]] = None,
     status_code: int = 200,
 ) -> Response:
-    return Response(
-        status_code=status_code, message=message, data=data, warnings=warnings
-    )
+    return Response(status_code=status_code, message=message, data=data, warnings=warnings)

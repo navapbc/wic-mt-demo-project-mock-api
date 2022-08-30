@@ -1,34 +1,29 @@
 import os
-from sqlalchemy.orm import Session, scoped_session
-from typing import Optional, Generator
-import time
+from contextlib import contextmanager
+from typing import Generator, Optional
+
 import connexion
 from flask import g
+from sqlalchemy.orm import scoped_session
+
 import api.db as db
 import api.logging
-from werkzeug.exceptions import Unauthorized
-
-from contextlib import contextmanager
 
 logger = api.logging.get_logger(__name__)
 
+
 def create_app(
     check_migrations_current: bool = True,
-    db_session_factory: Optional[Session] = None,
-    do_close_db: bool = True
+    db_session_factory: Optional[scoped_session] = None,
+    do_close_db: bool = True,
 ) -> connexion.FlaskApp:
 
     # Initialize the db
     if db_session_factory is None:
-        db_session_factory = db.init(
-            None, check_migrations_current=check_migrations_current
-        )
-
+        db_session_factory = db.init(None, check_migrations_current=check_migrations_current)
 
     options = {"swagger_url": "/docs"}
-    app = connexion.FlaskApp(
-        __name__, specification_dir=get_project_root_dir(), options=options
-    )
+    app = connexion.FlaskApp(__name__, specification_dir=get_project_root_dir(), options=options)
     app.add_api("openapi.yml", strict_validation=True, validate_responses=True)
 
     @app.app.before_request
@@ -56,6 +51,7 @@ def create_app(
 
     return app
 
+
 def db_session_raw() -> scoped_session:
     """Get a plain SQLAlchemy Session."""
     session: scoped_session = g.get("db")
@@ -66,7 +62,7 @@ def db_session_raw() -> scoped_session:
 
 
 @contextmanager
-def db_session(close: bool = False) -> Generator[db.Session, None, None]:
+def db_session(close: bool = False) -> Generator[scoped_session, None, None]:
     """Get a SQLAlchemy Session wrapped in some transactional management.
 
     This commits session when done, rolls back transaction on exceptions,

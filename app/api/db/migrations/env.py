@@ -8,24 +8,24 @@ from alembic import context
 # See database migrations section in `api/README.md` for details about running migrations.
 sys.path.insert(0, ".")  # noqa: E402
 
-from api.util.local import load_local_env_vars
+# Load env vars before anything further
+from api.util.local import load_local_env_vars  # noqa: E402 isort:skip
+
 load_local_env_vars()
 
 import api.db as db  # noqa: E402 isort:skip
 from api.db.models.base import Base  # noqa: E402 isort:skip
-
-
-import api.logging
+import api.logging  # noqa: E402 isort:skip
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
 
 # Initialize logging
-api.logging.init("migrations", True) #TODO - why doesn't this work as non-develop
+api.logging.init("migrations")
 
 if not config.get_main_option("sqlalchemy.url"):
-    uri = db.make_connection_uri(db.get_db_config(prefer_admin=True))
+    uri = db.make_connection_uri(db.get_db_config())
 
     # Escape percentage signs in the URI.
     # https://alembic.sqlalchemy.org/en/latest/api/config.html#alembic.config.Config.set_main_option
@@ -86,7 +86,7 @@ def run_migrations_online():
 
     """
 
-    url = config.get_main_option("sqlalchemy.url")
+    url = config.get_main_option("sqlalchemy.url", "SQLAlchemy URL not set")
     connectable = sqlalchemy.create_engine(url)
 
     with connectable.connect() as connection:
