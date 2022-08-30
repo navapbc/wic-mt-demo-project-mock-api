@@ -1,6 +1,6 @@
-###########
+##################################################
 # Constants
-###########
+##################################################
 
 APP_NAME := app
 
@@ -44,15 +44,28 @@ run:
 run-logs: run
 	docker-compose logs --follow --no-color $(APP_NAME) $(DECODE_LOG)
 
-#########################
+##################################################
 # DB & migrations
+##################################################
+
+#########################
+# DB running / setup
+#########################
+
+init-db: start-db db-upgrade
+
+start-db:
+	docker-compose up --detach mock-api-db
+
+db-recreate: ## Destroy current DB, setup new one
+db-recreate: clean-docker-volumes init-db
+
+#########################
+# DB Migrations
 #########################
 
 alembic_config := ./api/db/migrations/alembic.ini
 alembic_cmd := $(PY_RUN_CMD) alembic --config $(alembic_config)
-
-start-db:
-	docker-compose up --detach mock-api-db
 
 db-upgrade: ## Apply pending migrations to db
 	$(PY_RUN_CMD) db-migrate-up $(DECODE_LOG)
@@ -71,18 +84,21 @@ endif
 db-migrate-create: check-migrate-msg
 	$(alembic_cmd) revision --autogenerate -m "$(MIGRATE_MSG)"
 
-init-db: start-db db-upgrade
+MIGRATE_MERGE_MSG := Merge multiple heads
+db-migrate-merge-heads: ## Create a new migration that depends on all existing `head`s
+	$(alembic_cmd) merge heads -m "$(MIGRATE_MERGE_MSG)" $(args)
 
-#########################
+
+##################################################
 # Testing
-#########################
+##################################################
 
 test:
 	$(PY_RUN_CMD) pytest $(args)
 
-#########################
+##################################################
 # Formatting and linting
-#########################
+##################################################
 
 format:
 	$(PY_RUN_CMD) isort --atomic api tests
