@@ -46,7 +46,6 @@ lint-py: lint-flake lint-mypy lint-poetry-version
 lint-flake:
 	$(PY_RUN_CMD) flake8 --format=$(FLAKE8_FORMAT) api tests
 
-
 lint-mypy:
 	$(PY_RUN_CMD) mypy --show-error-codes $(MYPY_FLAGS) api $(MYPY_POSTPROC)
 
