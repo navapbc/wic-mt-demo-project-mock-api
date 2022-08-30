@@ -15,4 +15,4 @@ def eligibility_screener_post():
         message="It was a success",
         data=body,  # Echo it back for the moment
         status_code=201,
-    )
+    ).to_api_response()

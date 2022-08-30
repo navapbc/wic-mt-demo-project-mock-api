@@ -5,6 +5,8 @@
 #
 # https://docs.python.org/3/library/__main__.html
 
+import os
+
 import api.app
 import api.logging
 
@@ -12,7 +14,9 @@ logger = api.logging.get_logger(__package__)
 
 
 def main():
-    is_local = True  # TODO - determine this from something else
+    # TODO - can use a pydantic config to get this instead
+    environment = os.environ.get("ENVIRONMENT", "unknown")
+    is_local = environment == "local"
 
     api.logging.init(__package__, develop=is_local)
     logger.info("Running API Application")
