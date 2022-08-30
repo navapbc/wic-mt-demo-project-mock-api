@@ -4,6 +4,10 @@
 
 APP_NAME := app
 
+# Adding this to the end of a script that outputs JSON will convert
+# it to a readable format with timestamps and color-coding.
+DECODE_LOG := | python3 -u api/logging/decodelog.py
+
 # A few commands need adjustments if they're run in CI, specify those here
 # TODO - when CI gets hooked up, actually test this.
 ifdef CI
@@ -26,11 +30,15 @@ else
 PY_RUN_CMD := poetry run
 endif
 
+#########################
+# API Run
+#########################
+
 run:
 	docker-compose up -d --build
 
-run-logs:
-	docker-compose up --build
+run-logs: run
+	docker-compose logs --follow --no-color $(APP_NAME) $(DECODE_LOG)
 
 #########################
 # DB & migrations

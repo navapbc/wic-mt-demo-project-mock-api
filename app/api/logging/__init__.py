@@ -1,5 +1,6 @@
 import datetime
 import logging
+import json
 import logging.config
 import os
 import platform
@@ -7,77 +8,41 @@ import pwd
 import sys
 from typing import Any, cast
 
-RED = "\033[31m"
-GREEN = "\033[32m"
-BLUE = "\033[34m"
-ORANGE = "\033[38;5;208m"
-RESET = "\033[0m"
-NO_COLOUR = ""
 
-
-def colour_for_level(level: str) -> str:
-    if level in ("WARNING", "ERROR", "CRITICAL"):
-        return RED
-    return NO_COLOUR
-
-
-EXCLUDE_EXTRA = {
+# Attributes of LogRecord to exclude from the JSON formatted lines. An exclusion list approach is
+# used so that all "extra" attributes can be included in a line.
+EXCLUDE_ATTRIBUTES = {
     "args",
-    "created",
-    "entity.guid",
-    "entity.name",
-    "entity.type",
     "exc_info",
     "filename",
-    "funcName",
-    "levelname",
     "levelno",
     "lineno",
-    "message",
     "module",
     "msecs",
     "msg",
-    "name",
     "pathname",
-    "process",
     "processName",
     "relativeCreated",
-    "span.id",
-    "thread",
-    "threadName",
-    "trace.id",
-    "traceId",
 }
 
 
-class DevelopFormatter(logging.Formatter):  # noqa: B1
-    """A logging formatter which formats each line as text."""
+
+class JsonFormatter(logging.Formatter):  # noqa: B1
+    """A logging formatter which formats each line as JSON."""
 
     def format(self, record):
-        super(DevelopFormatter, self).format(record)
+        super(JsonFormatter, self).format(record)
 
-        created_at = datetime.datetime.utcfromtimestamp(record.created)
+        output = {
+            key: value
+            for key, value in record.__dict__.items()
+            if key not in EXCLUDE_ATTRIBUTES and value is not None
+        }
 
-        return "%s  %s%-36s%s %-28s %s%-8s %-80s %s%s%s" % (
-            created_at.isoformat(),
-            GREEN,
-            record.name,
-            RESET,
-            record.funcName,
-            colour_for_level(record.levelname),
-            record.levelname,
-            record.message,
-            BLUE,
-            " ".join(
-                "%s=%s" % (key, value)
-                for key, value in record.__dict__.items()
-                if key not in EXCLUDE_EXTRA and value is not None
-            ),
-            RESET,
-        )
+        return json.dumps(output, separators=(",", ":"))
 
 
-def init(program_name, develop=False):
+def init(program_name):
     for k, v in os.environ.items():
         print(k, v)
 
@@ -86,11 +51,11 @@ def init(program_name, develop=False):
         "disable_existing_loggers": False,
         "root": {"handlers": ["console"], "level": "INFO"},
         "formatters": {
-            "develop": {"()": DevelopFormatter},
+            "json": {"()": JsonFormatter},
         },
         "handlers": {
             "console": {
-                "formatter": "std_out",
+                "formatter": "json",
                 "class": "logging.StreamHandler",
                 "level": "INFO",
             }
@@ -101,8 +66,6 @@ def init(program_name, develop=False):
         },
     }
 
-    if develop:
-        logging_config["handlers"]["console"]["formatter"] = "develop"
     logging.config.dictConfig(logging_config)
 
     logger.info(
