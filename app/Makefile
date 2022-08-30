@@ -34,15 +34,27 @@ else
 PY_RUN_CMD := poetry run
 endif
 
-#########################
-# API Run
-#########################
+##################################################
+# API Build & Run
+##################################################
 
-run:
-	docker-compose up -d --build
+build:
+	docker-compose build
 
-run-logs: run
+start:
+	docker-compose up --detach
+
+run-logs: start
 	docker-compose logs --follow --no-color $(APP_NAME) $(DECODE_LOG)
+
+
+init: build init-db
+
+clean-volumes:
+	docker-compose down --volumes
+
+stop:
+	docker-compose down
 
 ##################################################
 # DB & migrations
@@ -52,10 +64,16 @@ run-logs: run
 # DB running / setup
 #########################
 
-init-db: start-db db-upgrade
+# Docker starts the image for the DB but it's not quite
+# fully ready, so add a 5 second sleep so upgrade doesn't
+# fail because the DB hasn't started yet.
+init-db: start-db sleep-5 db-upgrade
 
 start-db:
 	docker-compose up --detach mock-api-db
+
+clean-docker-volumes: ## Remove project docker volumes (which includes the DB state)
+	docker-compose down --volumes
 
 db-recreate: ## Destroy current DB, setup new one
 db-recreate: clean-docker-volumes init-db
@@ -120,3 +138,12 @@ lint-poetry-version: ## Check poetry version
 lint-spectral:
 	docker run --rm --tty --cap-drop=ALL --network=none --read-only --volume=$(PWD):/tmp:ro \
 		stoplight/spectral:6 lint /tmp/openapi.yml --ruleset /tmp/.spectral.yaml $(SPECTRAL_POSTPROC)
+
+
+##################################################
+# Miscellaneous Utilities
+##################################################
+
+# Pauses for 5 seconds
+sleep-5:
+	sleep 5
