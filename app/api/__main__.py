@@ -5,20 +5,27 @@
 #
 # https://docs.python.org/3/library/__main__.html
 
-import connexion
-import os
+import api.app
+import api.logging
+
+logger = api.logging.get_logger(__package__)
 
 
 def main():
-    options = {"swagger_url": "/docs"}
-    app = connexion.FlaskApp(__name__, specification_dir=get_project_root_dir(), options=options)
-    app.add_api('openapi.yml', strict_validation=True, validate_responses=True)
-    # app.add_api('openapi.yml', validate_responses=True)
-    app.run(port=8080)
+    is_local = True  # TODO - determine this from something else
 
+    api.logging.init(__package__, develop=is_local)
+    logger.info("Running API Application")
 
-def get_project_root_dir() -> str:
-    return os.path.join(os.path.dirname(__file__), "..")
+    app = api.app.create_app()
+
+    if is_local:
+        # If python files are changed, the app will auto-reload
+        # Note this doesn't have the OpenAPI yaml file configured at the moment
+        app.run(port=8080, use_reloader=True, reloader_type="stat")
+    else:
+        # Don't enable the reloader if non-local
+        app.run(port=8080)
 
 
 main()
