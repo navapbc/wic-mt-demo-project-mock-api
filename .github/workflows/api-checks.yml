@@ -1,8 +1,6 @@
 name: Mock API Checks
 
 on:
-  #for testing purposes
-  workflow_dispatch:
   push:
     branches:
       - main
