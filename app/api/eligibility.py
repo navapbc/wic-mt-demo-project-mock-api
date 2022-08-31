@@ -12,8 +12,10 @@ def eligibility_screener_post() -> flask.Response:
     """
     POST /v1/eligibility-screener
     """
+    logger.info("POST /v1/eligibility-screener")
 
     with api_context_manager() as api_context:
+
         response = eligibility_handler.create_eligibility_screener(api_context)
 
         api_context.db_session.commit()

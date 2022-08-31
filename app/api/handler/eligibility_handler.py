@@ -2,9 +2,12 @@ from uuid import uuid4
 
 from pydantic import UUID4
 
+import api.logging
 from api.db.models.eligibility_models import EligibilityScreener
 from api.util.api_context import ApiContext
 from api.util.pydantic_util import PydanticBaseModel
+
+logger = api.logging.get_logger(__name__)
 
 
 class EligibilityScreenerSharedParams(PydanticBaseModel):
@@ -27,6 +30,7 @@ def create_eligibility_screener(api_context: ApiContext) -> EligibilityScreenerR
     # moving a lot more to this handler. Need to see how
     # well that works out as more is added.
     request = EligibilityScreenerRequest.parse_obj(api_context.request_body)
+    logger.info(request)  # TODO - remove, just for testing at the moment
 
     eligibility_screener = EligibilityScreener(
         # Specify the ID so we don't need to commit + refresh to get from DB

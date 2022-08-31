@@ -6,10 +6,9 @@ APP_NAME := app
 
 # Adding this to the end of a script that outputs JSON will convert
 # it to a readable format with timestamps and color-coding.
-# TODO - investigate if there's a simple/reasonable configurational
-# approach to just have the logs output in this manner to begin
-# they are ~almost there but there's a few pieces missing that I
-# want to circle back around on later.
+# Note that you can also change the LOG_FORMAT env var to switch
+# between JSON & human readable format. This is left in place
+# in the event JSON is output from a process we don't log.
 DECODE_LOG := 2>&1 | python3 -u api/logging/decodelog.py
 
 # A few commands need adjustments if they're run in CI, specify those here
@@ -45,7 +44,7 @@ start:
 	docker-compose up --detach
 
 run-logs: start
-	docker-compose logs --follow --no-color $(APP_NAME) $(DECODE_LOG)
+	docker-compose logs --follow --no-color $(APP_NAME)
 
 
 init: build init-db
@@ -86,13 +85,13 @@ alembic_config := ./api/db/migrations/alembic.ini
 alembic_cmd := $(PY_RUN_CMD) alembic --config $(alembic_config)
 
 db-upgrade: ## Apply pending migrations to db
-	$(PY_RUN_CMD) db-migrate-up $(DECODE_LOG)
+	$(PY_RUN_CMD) db-migrate-up
 
 db-downgrade: ## Rollback last migration in db
-	$(PY_RUN_CMD) db-migrate-down $(DECODE_LOG)
+	$(PY_RUN_CMD) db-migrate-down
 
 db-downgrade-all: ## Rollback all migrations
-	$(PY_RUN_CMD) db-migrate-down-all $(DECODE_LOG)
+	$(PY_RUN_CMD) db-migrate-down-all
 
 check-migrate-msg:
 ifndef MIGRATE_MSG

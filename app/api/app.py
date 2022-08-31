@@ -28,7 +28,6 @@ def create_app(
 
     @app.app.before_request
     def push_db():
-        print("Hello?")
         # Attach the DB session factory
         # to the global Flask context
         g.db = db_session_factory

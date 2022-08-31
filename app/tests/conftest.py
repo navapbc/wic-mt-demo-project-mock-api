@@ -1,3 +1,4 @@
+import logging.config  # noqa: B1
 import os
 import uuid
 
@@ -128,6 +129,16 @@ def set_no_db_factories_alert():
     factory writes to the database.
     """
     os.environ["DB_FACTORIES_DISABLE_DB_ACCESS"] = "1"
+
+
+@pytest.fixture
+def logging_fix(monkeypatch):
+    """Disable the application custom logging setup
+
+    Needed if the code under test calls api.util.logging.init() so that
+    tests using the caplog fixture don't break.
+    """
+    monkeypatch.setattr(logging.config, "dictConfig", lambda config: None)  # noqa: B1
 
 
 @pytest.fixture
