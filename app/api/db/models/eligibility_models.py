@@ -10,9 +10,6 @@ from .base import Base, TimestampMixin, uuid_gen
 class EligibilityScreener(Base, TimestampMixin):
     __tablename__ = "eligibility_screener"
 
-    # Need to specify UUIDs like this, might
-    # be worth looking into a way to shove this into a Type
-    # definition to remove all the boilerplate
     eligibility_screener_id: Mapped[UUID] = Column(
         postgresUUID(as_uuid=True), primary_key=True, default=uuid_gen
     )

@@ -57,7 +57,6 @@ def test_db_schema_non_session(monkeypatch):
 
 
 def test_db_setup_via_alembic_migration(test_db_schema_non_session):
-    # Change directory location so the relative script_location in alembic config works.
     command.upgrade(alembic_cfg, "head")
 
 
