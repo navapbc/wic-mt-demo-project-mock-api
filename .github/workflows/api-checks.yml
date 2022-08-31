@@ -23,7 +23,7 @@ jobs:
           echo "Placeholder until linting is installed"
           exit 0
   security:
-    runs-on: ubutntu-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
