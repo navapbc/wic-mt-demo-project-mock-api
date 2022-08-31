@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - app/**
+  pull_request:
+    paths:
+      - app/**
 # this workflow should be updated/merged when WMDP-123. etc are merged
 jobs:
   lint:
