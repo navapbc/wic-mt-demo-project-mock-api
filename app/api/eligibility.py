@@ -1,32 +1,25 @@
-import connexion
+import flask
 
-import api.app as app
+import api.handler.eligibility_handler as eligibility_handler
 import api.logging as logging
 import api.util.response as response_util
-from api.db.models.eligibility_models import EligibilityScreener
+from api.util.api_context import api_context_manager
 
 logger = logging.get_logger(__name__)
 
 
-def eligibility_screener_post():
-    body = connexion.request.json
+def eligibility_screener_post() -> flask.Response:
+    """
+    POST /v1/eligibility-screener
+    """
 
-    logger.info(body)
+    with api_context_manager() as api_context:
+        response = eligibility_handler.create_eligibility_screener(api_context)
 
-    with app.db_session() as db_session:
+        api_context.db_session.commit()
 
-        # TODO - when I add Pydantic in the next ticket
-        # we'll use that
-        eligibility_screener = EligibilityScreener(
-            first_name=body["first_name"],
-            last_name=body["last_name"],
-            phone_number=body["phone_number"],
-        )
-        db_session.add(eligibility_screener)
-        db_session.commit()
-
-    return response_util.success_response(
-        message="It was a success",
-        data=body,  # TODO - Echo it back for the moment - in Pydantic PR build from DB object
-        status_code=201,
-    ).to_api_response()
+        return response_util.success_response(
+            message="Added eligibility screener to DB",
+            data=response.dict(),
+            status_code=201,
+        ).to_api_response()

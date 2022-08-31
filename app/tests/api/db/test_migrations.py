@@ -1,6 +1,3 @@
-import os
-from pathlib import Path
-
 import pytest
 from alembic import command
 from alembic.script import ScriptDirectory
@@ -61,7 +58,6 @@ def test_db_schema_non_session(monkeypatch):
 
 def test_db_setup_via_alembic_migration(test_db_schema_non_session):
     # Change directory location so the relative script_location in alembic config works.
-    os.chdir(Path(__file__).parent.parent)
     command.upgrade(alembic_cfg, "head")
 
 

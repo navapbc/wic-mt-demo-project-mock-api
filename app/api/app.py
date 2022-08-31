@@ -1,6 +1,6 @@
 import os
 from contextlib import contextmanager
-from typing import Generator, Optional
+from typing import Any, Generator, Optional
 
 import connexion
 from flask import g
@@ -28,6 +28,7 @@ def create_app(
 
     @app.app.before_request
     def push_db():
+        print("Hello?")
         # Attach the DB session factory
         # to the global Flask context
         g.db = db_session_factory
@@ -73,6 +74,14 @@ def db_session(close: bool = False) -> Generator[scoped_session, None, None]:
     session = db_session_raw()
     with db.session_scope(session, close) as session_scoped:
         yield session_scoped
+
+
+def current_user() -> Any:  # TODO - typing
+    current = g.get("current_user")
+    if current is None:
+        # TODO - should be an exception when we add auth
+        logger.warning("No current user found for request")
+    return current
 
 
 def get_project_root_dir() -> str:

@@ -22,6 +22,7 @@ def test_post_eligibility_201(client, test_db_session):
     results = test_db_session.query(EligibilityScreener).all()
     assert len(results) == 1
     assert results[0].eligibility_screener_id is not None
+    assert str(results[0].eligibility_screener_id) == data["eligibility_screener_id"]
     assert results[0].created_at is not None
     assert results[0].updated_at is not None
 
