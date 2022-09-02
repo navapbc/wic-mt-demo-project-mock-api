@@ -19,8 +19,8 @@ logger = api.logging.get_logger(__name__)
 
 class DbConfig(PydanticBaseEnvConfig):
     host: str = Field("localhost", env="DB_HOST")
-    name: str = Field("mock-api", env="POSTGRES_DB")
-    username: str = Field("mock_api_user", env="POSTGRES_USER")
+    name: str = Field("main-db", env="POSTGRES_DB")
+    username: str = Field("local_db_user", env="POSTGRES_USER")
     password: Optional[str] = Field(..., env="POSTGRES_PASSWORD")
     db_schema: str = Field("public", env="DB_SCHEMA")
     port: str = Field("5432", env="DB_PORT")

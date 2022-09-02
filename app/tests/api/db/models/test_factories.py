@@ -62,8 +62,8 @@ def test_factory_create_uninitialized_db_session(test_db_session):
 
 
 def test_eligibility_screener_factory_create(test_db_session, initialize_factories_session):
-    # create does use the DB, so we'll check the DB
-    # record as well for sanity
+    # Create actually writes a record to the DB when run
+    # so we'll check the DB directly as well.
     screener = EligibilityScreenerFactory.create()
     validate_screener_record(screener)
 

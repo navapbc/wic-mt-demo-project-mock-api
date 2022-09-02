@@ -87,7 +87,7 @@ def init(program_name):
         "loggers": {
             "alembic": {"handlers": ["console"], "level": "INFO", "propagate": False},
             "werkzeug": {"handlers": ["console"], "level": "WARN", "propagate": False},
-            "app.api": {"handlers": ["console"], "level": "INFO", "propagate": False},
+            "api": {"handlers": ["console"], "level": "INFO", "propagate": False},
             # Log DB pool connection invalidations and recycle events. At DEBUG
             # level includes all connection checkin/checkouts to the pool.
             #
