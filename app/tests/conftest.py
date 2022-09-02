@@ -13,10 +13,10 @@ import api.logging
 
 logger = api.logging.get_logger(__name__)
 
-
 ####################
 # Test DB session
 ####################
+
 
 # From https://github.com/pytest-dev/pytest/issues/363
 @pytest.fixture(scope="session")
@@ -62,11 +62,11 @@ def test_db_schema(monkeypatch_session):
     Create a test schema, if it doesn't already exist, and drop it after the
     test completes.
     """
-    schema_name = f"mock_api_test_{uuid.uuid4().int}"
+    schema_name = f"test_schema_{uuid.uuid4().int}"
 
     monkeypatch_session.setenv("DB_SCHEMA", schema_name)
-    monkeypatch_session.setenv("POSTGRES_DB", "mock-api")
-    monkeypatch_session.setenv("POSTGRES_USER", "mock_api_user")
+    monkeypatch_session.setenv("POSTGRES_DB", "main-db")
+    monkeypatch_session.setenv("POSTGRES_USER", "local_db_user")
     monkeypatch_session.setenv("POSTGRES_PASSWORD", "secret123")
     monkeypatch_session.setenv("ENVIRONMENT", "local")
 
@@ -132,16 +132,6 @@ def set_no_db_factories_alert():
 
 
 @pytest.fixture
-def logging_fix(monkeypatch):
-    """Disable the application custom logging setup
-
-    Needed if the code under test calls api.util.logging.init() so that
-    tests using the caplog fixture don't break.
-    """
-    monkeypatch.setattr(logging.config, "dictConfig", lambda config: None)  # noqa: B1
-
-
-@pytest.fixture
 def initialize_factories_session(monkeypatch, test_db_session):
     monkeypatch.delenv("DB_FACTORIES_DISABLE_DB_ACCESS")
 
@@ -149,6 +139,21 @@ def initialize_factories_session(monkeypatch, test_db_session):
 
     logger.info("set factories db_session to %s", test_db_session)
     factories.db_session = test_db_session
+
+
+####################
+# Logging
+####################
+
+
+@pytest.fixture
+def logging_fix(monkeypatch):
+    """Disable the application custom logging setup
+
+    Needed if the code under test calls api.util.logging.init() so that
+    tests using the caplog fixture don't break.
+    """
+    monkeypatch.setattr(logging.config, "dictConfig", lambda config: None)  # noqa: B1
 
 
 ####################

@@ -42,16 +42,15 @@ def have_all_migrations_run(db_engine: sqlalchemy.engine.Engine) -> None:
         # Otherwise, don't bother with this - most likely running in a testing environment.
         if current_heads != expected_heads:
             raise Exception(
-                "The database schema is not in sync with the migrations. Please verify that the "
-                "migrations have been run up to {}; currently at {}".format(
-                    expected_heads, current_heads
+                (
+                    "The database schema is not in sync with the migrations."
+                    "Please verify that the migrations have been"
+                    f"run up to {expected_heads}; currently at {current_heads}"
                 )
             )
 
         logger.info(
-            "The current migration head is up to date, {} and Alembic is expecting {}".format(
-                current_heads, expected_heads
-            )
+            f"The current migration head is up to date, {current_heads} and Alembic is expecting {expected_heads}"
         )
 
 
