@@ -57,15 +57,56 @@ components:
       properties:
         first_name:
           type: string
+          example: Jane
+          description: The applicants first name
         last_name:
           type: string
+          example: Doe
+          description: The applicants last name
         phone_number:
           type: string
           example: "224-705-2345"
           pattern: '^([0-9]|\*){3}\-([0-9]|\*){3}\-[0-9]{4}$'
+        eligibility_categories:
+          type: array
+          items:
+            type: string
+            enum:
+              - "pregnant"
+              - "baby"
+              - "guardian"
+              - "loss"
+          example: ["pregnant"]
+          description: The list of categories that make the applicant eligible
+        has_prior_wic_enrollment:
+          type: boolean
+          example: false
+          description: Whether or not the applicant or anyone in their household has prior WIC enrollment
+        eligibility_programs:
+          type: array
+          items:
+            type: string
+            enum:
+              - "insurance"
+              - "snap"
+              - "tanf"
+          example: ["insurance", "snap"]
+          description: Other programs the applicant is already enrolled in
+        household_size:
+          type: integer
           nullable: true
-        
-      required: ["first_name", "last_name"]
+          example: 1
+          description: Household size - only necessary if no other current eligibility programs
+        zip_code:
+          type: string
+          pattern: '^[0-9]{5}((?:-[0-9]{4})?|(?:-\*{4})?)$'
+          example: "12345"
+          description: The ZIP code of the applicant
+        applicant_notes:
+          type: string
+          nullable: true
+          example: "Example notes"
+          description: Any additional applicant notes
 
     SuccessfulResponse:
       type: object

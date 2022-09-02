@@ -8,6 +8,8 @@ from sqlalchemy.orm import scoped_session
 
 import api.db as db
 import api.logging
+from api.util.connexion_validators import get_custom_validator_map
+from api.util.error_handlers import add_error_handlers_to_app
 
 logger = api.logging.get_logger(__name__)
 
@@ -20,11 +22,13 @@ def create_app(
 
     # Initialize the db
     if db_session_factory is None:
-        db_session_factory = db.init(None, check_migrations_current=check_migrations_current)
+        db_session_factory = db.init(check_migrations_current=check_migrations_current)
 
     options = {"swagger_url": "/docs"}
     app = connexion.FlaskApp(__name__, specification_dir=get_project_root_dir(), options=options)
-    app.add_api("openapi.yml", strict_validation=True, validate_responses=True)
+    add_error_handlers_to_app(app)
+
+    app.add_api("openapi.yml", strict_validation=True, validator_map=get_custom_validator_map(), validate_responses=True)
 
     @app.app.before_request
     def push_db():

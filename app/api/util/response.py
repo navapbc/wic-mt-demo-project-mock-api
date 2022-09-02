@@ -1,6 +1,13 @@
 from dataclasses import asdict, dataclass
-from typing import Any, Optional
-
+from typing import Any, Optional, Type
+from werkzeug.exceptions import (
+    BadRequest,
+    Conflict,
+    Forbidden,
+    HTTPException,
+    NotFound,
+    ServiceUnavailable,
+)
 import flask
 
 
@@ -11,6 +18,19 @@ class ValidationErrorDetail:
     rule: Optional[str] = None  # Also an enum in Mass
     field: Optional[str] = None
     value: Optional[str] = None  # Do not store PII data here, as it gets logged in some cases
+
+class ValidationException(Exception):
+    __slots__ = ["errors", "message", "data"]
+
+    def __init__(
+        self,
+        errors: list[ValidationErrorDetail],
+        message: str = "Invalid request",
+        data: Optional[dict | list[dict]] = None,
+    ):
+        self.errors = errors
+        self.message = message
+        self.data = data or {}
 
 
 @dataclass
@@ -53,3 +73,14 @@ def success_response(
     status_code: int = 200,
 ) -> Response:
     return Response(status_code=status_code, message=message, data=data, warnings=warnings)
+
+def error_response(
+    status_code: 
+        HTTPException |Type[HTTPException] | Type[BadRequest] | Type[Conflict] | Type[ServiceUnavailable] | Type[NotFound] | Type[Forbidden],
+    message: str,
+    errors: list[ValidationErrorDetail],
+    data: Optional[dict | list[dict]] = None,
+    warnings: Optional[list[ValidationErrorDetail]] = None,
+) -> Response:
+    code = status_code.code if status_code.code is not None else 400
+    return Response(status_code=code, message=message, errors=errors, data=data, warnings=warnings)
