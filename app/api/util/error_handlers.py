@@ -1,9 +1,9 @@
-from typing import Callable, Optional, Tuple
-import pydantic
 import re
 import sys
 from types import TracebackType
-from api.util.response import Response, ValidationErrorDetail, ValidationException, error_response
+from typing import Callable, Optional, Tuple
+
+import pydantic
 from werkzeug.exceptions import (
     BadRequest,
     Forbidden,
@@ -13,9 +13,12 @@ from werkzeug.exceptions import (
     ServiceUnavailable,
     Unauthorized,
 )
+
 import api.logging
+from api.util.response import Response, ValidationErrorDetail, ValidationException, error_response
 
 logger = api.logging.get_logger(__name__)
+
 
 def add_error_handlers_to_app(connexion_app):
     connexion_app.add_error_handler(ValidationException, validation_request_handler)
@@ -37,10 +40,12 @@ def add_error_handlers_to_app(connexion_app):
     #
     connexion_app.add_error_handler(500, internal_server_error_handler)
 
+
 def http_exception_handler(http_exception: HTTPException) -> Response:
     return error_response(
         status_code=http_exception, message=str(http_exception.description), errors=[]
     ).to_api_response()
+
 
 def internal_server_error_handler(error: InternalServerError) -> Response:
     # Use the original exception if it exists.
@@ -49,6 +54,7 @@ def internal_server_error_handler(error: InternalServerError) -> Response:
     logger.exception(str(exception), extra={"error.class": type(exception).__name__})
 
     return http_exception_handler(error)
+
 
 def validation_request_handler(validation_exception: ValidationException) -> Response:
     for error in validation_exception.errors:
@@ -61,11 +67,14 @@ def validation_request_handler(validation_exception: ValidationException) -> Res
         data=validation_exception.data,
     ).to_api_response()
 
+
 def handle_pydantic_validation_error(exception: pydantic.ValidationError) -> Response:
     return validation_request_handler(convert_pydantic_error_to_validation_exception(exception))
 
+
 # Some pydantic errors aren't of a format we like
 pydantic_error_type_map = {"value_error.date": "date"}
+
 
 def convert_pydantic_error_to_validation_exception(
     exception: pydantic.ValidationError,
@@ -91,13 +100,17 @@ def convert_pydantic_error_to_validation_exception(
 
     return ValidationException(errors=errors, message="Request Validation Error", data={})
 
+
 UNEXPECTED_ERROR_TYPES = {"enum", "type"}
+
+
 def is_unexpected_validation_error(error: ValidationErrorDetail) -> bool:
     return (
         error.type in UNEXPECTED_ERROR_TYPES
         or error.type.startswith("type_error")
         or error.type.startswith("value_error")
     )
+
 
 def validation_request_handler(validation_exception: ValidationException) -> Response:
     for error in validation_exception.errors:
@@ -110,10 +123,12 @@ def validation_request_handler(validation_exception: ValidationException) -> Res
         data=validation_exception.data,
     ).to_api_response()
 
+
 def log_validation_error(
     validation_exception: ValidationException,
     error: ValidationErrorDetail,
-    unexpected_error_check_func: Optional[Callable[[ValidationErrorDetail], bool]] = None
+    unexpected_error_check_func: Optional[Callable[[ValidationErrorDetail], bool]] = None,
+    only_warn: bool = False,
 ) -> None:
     # Create a readable message for the individual error.
     # Do not use the error's actual message since it may include PII.
@@ -149,11 +164,14 @@ def log_validation_error(
         # Log explicit errors in the case of unexpected validation errors.
         info = sys.exc_info()
         info_with_readable_msg: BaseException | Tuple[type, BaseException, Optional[TracebackType]]
-        
+
         if info[0] is None:
             exc = Exception(message)
             info_with_readable_msg = (type(exc), exc, exc.__traceback__)
         else:
             info_with_readable_msg = (info[0], Exception(message), info[2])
 
-        logger.warning(message, extra=log_attributes, exc_info=info_with_readable_msg)
+        if only_warn:
+            logger.warning(message, extra=log_attributes, exc_info=info_with_readable_msg)
+        else:
+            logger.error(message, extra=log_attributes, exc_info=info_with_readable_msg)

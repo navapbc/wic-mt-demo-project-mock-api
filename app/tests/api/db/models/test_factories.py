@@ -7,26 +7,51 @@ from api.db.models.factories import EligibilityScreenerFactory
 # as the API we have implemented at the moment
 # doesn't use it.
 
+params = {
+    "first_name": "bob",
+    "last_name": "smith",
+    "phone_number": "123-456-7890",
+    "eligibility_categories": ["pregnant"],
+    "has_prior_wic_enrollment": True,
+    "eligibility_programs": ["tanf", "snap"],
+    "household_size": 3,
+    "zip_code": "12345-6789",
+    "applicant_notes": "notes?",
+}
+
+
+def validate_screener_record(screener, expected_values=None):
+    # Grab the JSON of the screener for easy access
+    if expected_values:
+        screener_json = screener.for_json()
+        assert screener.eligibility_screener_id is not None
+        for k, v in expected_values.items():
+            assert screener_json[k] == v
+    else:
+        # Otherwise just validate the values are set
+        assert screener.eligibility_screener_id is not None
+        assert screener.first_name is not None
+        assert screener.last_name is not None
+        assert screener.phone_number is not None
+        assert (
+            screener.eligibility_categories is not None and len(screener.eligibility_categories) > 0
+        )
+        assert screener.has_prior_wic_enrollment is not None
+        assert screener.eligibility_programs is not None and len(screener.eligibility_programs) > 0
+        assert screener.household_size is None  # The default
+        assert screener.zip_code is not None
+        assert screener.applicant_notes is not None
+
 
 def test_eligibility_screener_factory_build():
     # Build doesn't use the DB
 
     # Build sets the values
     screener = EligibilityScreenerFactory.build()
-    assert screener.eligibility_screener_id is not None
-    assert screener.first_name is not None
-    assert screener.last_name is not None
-    assert screener.phone_number is not None
+    validate_screener_record(screener)
 
-    params = {"first_name": "bob", "last_name": "smith", "phone_number": "123-456-7890"}
     screener = EligibilityScreenerFactory.build(**params)
-    for k, v in params.items():
-        assert screener.__dict__[k] == v
-
-    params = {"first_name": None, "last_name": None, "phone_number": None}
-    screener = EligibilityScreenerFactory.build(**params)
-    for k in params.keys():
-        assert screener.__dict__[k] is None
+    validate_screener_record(screener, params)
 
 
 def test_factory_create_uninitialized_db_session(test_db_session):
@@ -37,51 +62,46 @@ def test_factory_create_uninitialized_db_session(test_db_session):
 
 
 def test_eligibility_screener_factory_create(test_db_session, initialize_factories_session):
-    # Build doesn't use the DB
-
-    # Build sets the values
+    # create does use the DB, so we'll check the DB
+    # record as well for sanity
     screener = EligibilityScreenerFactory.create()
-    assert screener.eligibility_screener_id is not None
-    assert screener.first_name is not None
-    assert screener.last_name is not None
-    assert screener.phone_number is not None
+    validate_screener_record(screener)
 
     db_record = (
         test_db_session.query(EligibilityScreener)
         .filter(EligibilityScreener.eligibility_screener_id == screener.eligibility_screener_id)
         .one_or_none()
     )
-    assert screener.first_name == db_record.first_name
-    assert screener.last_name == db_record.last_name
-    assert screener.phone_number == db_record.phone_number
+    # Make certain the DB record matches the factory one.
+    validate_screener_record(db_record, screener.for_json())
 
-    params = {"first_name": "bob", "last_name": "smith", "phone_number": "123-456-7890"}
     screener = EligibilityScreenerFactory.create(**params)
-    for k, v in params.items():
-        assert screener.__dict__[k] == v
+    validate_screener_record(screener, params)
 
     db_record = (
         test_db_session.query(EligibilityScreener)
         .filter(EligibilityScreener.eligibility_screener_id == screener.eligibility_screener_id)
         .one_or_none()
     )
-    assert screener.first_name == db_record.first_name
-    assert screener.last_name == db_record.last_name
-    assert screener.phone_number == db_record.phone_number
+    # Make certain the DB record matches the factory one.
+    validate_screener_record(db_record, screener.for_json())
 
-    params = {"first_name": None, "last_name": None, "phone_number": None}
-    screener = EligibilityScreenerFactory.create(**params)
-    for k in params.keys():
-        assert screener.__dict__[k] is None
+    # Can set nullable values, overriding any default
+    null_params = {
+        "eligibility_categories": None,
+        "eligibility_programs": None,
+        "household_size": None,
+        "applicant_notes": None,
+    }
+    screener = EligibilityScreenerFactory.create(**null_params)
+    validate_screener_record(screener, null_params)
 
     db_record = (
         test_db_session.query(EligibilityScreener)
         .filter(EligibilityScreener.eligibility_screener_id == screener.eligibility_screener_id)
         .one_or_none()
     )
-    assert screener.first_name == db_record.first_name
-    assert screener.last_name == db_record.last_name
-    assert screener.phone_number == db_record.phone_number
+    validate_screener_record(db_record, screener.for_json())
 
     all_db_records = test_db_session.query(EligibilityScreener).all()
     assert len(all_db_records) == 3

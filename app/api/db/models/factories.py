@@ -66,3 +66,9 @@ class EligibilityScreenerFactory(BaseFactory):
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     phone_number = "123-456-7890"
+    eligibility_categories = ["baby"]
+    has_prior_wic_enrollment = False
+    eligibility_programs = ["tanf"]
+    household_size = None
+    zip_code = factory.Faker("postcode")
+    applicant_notes = factory.Sequence(lambda n: f"Notes #{n}")

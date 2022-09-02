@@ -1,17 +1,16 @@
+import jsonschema
+from connexion.decorators.response import ResponseValidator
 from connexion.decorators.validation import (
     ParameterValidator,
     RequestBodyValidator,
     ResponseBodyValidator,
 )
-from connexion.decorators.response import ResponseValidator
-
-import jsonschema
+from connexion.json_schema import Draft4RequestValidator, Draft4ResponseValidator
 from connexion.utils import is_null
 
-from connexion.json_schema import Draft4RequestValidator, Draft4ResponseValidator
 from api.util.error_handlers import log_validation_error
-
 from api.util.response import ValidationErrorDetail, ValidationException
+
 
 def get_custom_validator_map():
     return {
@@ -19,6 +18,7 @@ def get_custom_validator_map():
         "response": CustomResponseValidator,
         "parameter": CustomParameterValidator,
     }
+
 
 # via https://python-jsonschema.readthedocs.io/en/stable/faq/#why-doesn-t-my-schema-s-default-property-set-the-default-on-my-instance
 def extend_with_set_default(validator_class):
@@ -37,6 +37,7 @@ def extend_with_set_default(validator_class):
 
 DefaultsEnforcingDraft4RequestValidator = extend_with_set_default(Draft4RequestValidator)
 DefaultsEnforcingDraft4ResponseValidator = extend_with_set_default(Draft4ResponseValidator)
+
 
 def validate_schema_util(validator_decorator, data, error_message):
     errors = list(validator_decorator.validator.iter_errors(data))
@@ -78,9 +79,7 @@ class CustomRequestBodyValidator(RequestBodyValidator):
 
         if not self.is_null_value_valid and is_null(data):
             errors = [
-                ValidationErrorDetail(
-                    field="", message="Missing request body", type="required"
-                )
+                ValidationErrorDetail(field="", message="Missing request body", type="required")
             ]
 
             raise ValidationException(errors=errors, message="Request Validation Error", data=data)
@@ -97,8 +96,8 @@ class CustomResponseBodyValidator(ResponseBodyValidator):
     def validate_schema(self, data, url):
         validate_schema_util(self, data, "Response Validation Error")
 
+
 class CustomResponseValidator(ResponseValidator):
-    
     def validate_helper(self, data, status_code, headers, url):
         content_type = headers.get("Content-Type", self.mimetype)
         content_type = content_type.rsplit(";", 1)[0]  # remove things like utf8 metadata
@@ -133,7 +132,7 @@ class CustomParameterValidator(ParameterValidator):
         # Example: https://swagger.io/docs/specification/describing-request-body/multipart-requests/
         #
         # Below we check if the requestBody is multipart/form-data and skip parameter validation.
-        # The validation will be handled by RequestBodyValidator.validate_formdata_parameter_list 
+        # The validation will be handled by RequestBodyValidator.validate_formdata_parameter_list
         # https://github.com/zalando/connexion/blob/master/connexion/decorators/validation.py#L125
         is_multi_part_form = request.headers.get("Content-Type") and request.headers.get(
             "Content-Type"

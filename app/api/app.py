@@ -28,7 +28,12 @@ def create_app(
     app = connexion.FlaskApp(__name__, specification_dir=get_project_root_dir(), options=options)
     add_error_handlers_to_app(app)
 
-    app.add_api("openapi.yml", strict_validation=True, validator_map=get_custom_validator_map(), validate_responses=True)
+    app.add_api(
+        "openapi.yml",
+        strict_validation=True,
+        validator_map=get_custom_validator_map(),
+        validate_responses=True,
+    )
 
     @app.app.before_request
     def push_db():

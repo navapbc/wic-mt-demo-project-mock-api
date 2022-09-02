@@ -1,6 +1,7 @@
-from uuid import uuid4
 from typing import Optional
-from pydantic import UUID4, validator, Field
+from uuid import uuid4
+
+from pydantic import UUID4, Field, validator
 
 import api.logging
 from api.db.models.eligibility_models import EligibilityScreener
@@ -24,8 +25,11 @@ class EligibilityScreenerSharedParams(PydanticBaseModel):
     zip_code: str
     applicant_notes: Optional[str]
 
+
 class EligibilityScreenerRequest(EligibilityScreenerSharedParams):
     pass
+
+
 class EligibilityScreenerResponse(EligibilityScreenerSharedParams):
     eligibility_screener_id: UUID4
 

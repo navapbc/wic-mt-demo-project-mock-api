@@ -1,5 +1,7 @@
 from dataclasses import asdict, dataclass
 from typing import Any, Optional, Type
+
+import flask
 from werkzeug.exceptions import (
     BadRequest,
     Conflict,
@@ -8,7 +10,6 @@ from werkzeug.exceptions import (
     NotFound,
     ServiceUnavailable,
 )
-import flask
 
 
 @dataclass
@@ -18,6 +19,7 @@ class ValidationErrorDetail:
     rule: Optional[str] = None  # Also an enum in Mass
     field: Optional[str] = None
     value: Optional[str] = None  # Do not store PII data here, as it gets logged in some cases
+
 
 class ValidationException(Exception):
     __slots__ = ["errors", "message", "data"]
@@ -74,9 +76,15 @@ def success_response(
 ) -> Response:
     return Response(status_code=status_code, message=message, data=data, warnings=warnings)
 
+
 def error_response(
-    status_code: 
-        HTTPException |Type[HTTPException] | Type[BadRequest] | Type[Conflict] | Type[ServiceUnavailable] | Type[NotFound] | Type[Forbidden],
+    status_code: HTTPException
+    | Type[HTTPException]
+    | Type[BadRequest]
+    | Type[Conflict]
+    | Type[ServiceUnavailable]
+    | Type[NotFound]
+    | Type[Forbidden],
     message: str,
     errors: list[ValidationErrorDetail],
     data: Optional[dict | list[dict]] = None,

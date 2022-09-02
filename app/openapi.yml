@@ -38,7 +38,7 @@ paths:
                       data:
                         $ref: "#/components/schemas/EligibilityScreenerResponse"
         "400":
-          description: TODO - figure out error codes we actually will use
+          description: An unsuccessful request returns a 400 status code if one or more errors occurred.
           content:
             application/json:
               schema:
@@ -52,7 +52,7 @@ paths:
 
 components:
   schemas:
-    EligibilityScreenerRequest:
+    EligibilityScreenerBase:
       type: object
       properties:
         first_name:
@@ -108,13 +108,29 @@ components:
           example: "Example notes"
           description: Any additional applicant notes
 
+    EligibilityScreenerRequest:
+      allOf:
+        - $ref: "#/components/schemas/EligibilityScreenerBase"
+
+    EligibilityScreenerResponse:
+      type: object
+      properties:
+        eligibility_screener_id:
+          type: string
+          format: uuid
+          example: "2f0f58a0-fcad-465b-b474-ee6c961cd6e3"
+      allOf:
+        - $ref: "#/components/schemas/EligibilityScreenerBase"
+
     SuccessfulResponse:
       type: object
       properties:
         status_code:
           type: integer
+          example: 201
         message:
           type: string
+          example: "success"
         data:
           oneOf:
             - type: array
@@ -131,8 +147,10 @@ components:
       properties:
         status_code:
           type: integer
+          example: 400
         message:
           type: string
+          example: "Unable to add record"
         data:
           oneOf:
             - type: array
@@ -177,12 +195,6 @@ components:
           type: string
       additionalProperties: false
 
-    EligibilityScreenerResponse:
-      type: object
-      properties:
-        eligibility_screener_id:
-          type: string
-          format: uuid
-          example: "2f0f58a0-fcad-465b-b474-ee6c961cd6e3"
+
 
 
