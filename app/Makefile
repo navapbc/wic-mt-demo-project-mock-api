@@ -50,7 +50,7 @@ run-logs: start
 
 init: build init-db
 
-clean-volumes:
+clean-volumes: ## Remove project docker volumes (which includes the DB state)
 	docker-compose down --volumes
 
 stop:
@@ -72,10 +72,7 @@ init-db: start-db sleep-5 db-upgrade
 start-db:
 	docker-compose up --detach mock-api-db
 
-clean-docker-volumes: ## Remove project docker volumes (which includes the DB state)
-	docker-compose down --volumes
-
-db-recreate: ## Destroy current DB, setup new one
+## Destroy current DB, setup new one
 db-recreate: clean-docker-volumes init-db
 
 #########################
