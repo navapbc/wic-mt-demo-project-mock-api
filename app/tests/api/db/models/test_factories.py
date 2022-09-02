@@ -37,9 +37,8 @@ def test_factory_create_uninitialized_db_session(test_db_session):
 
 
 def test_eligibility_screener_factory_create(test_db_session, initialize_factories_session):
-    # Build doesn't use the DB
-
-    # Build sets the values
+    # Create actually writes a record to the DB when run
+    # so we'll check the DB directly as well.
     screener = EligibilityScreenerFactory.create()
     assert screener.eligibility_screener_id is not None
     assert screener.first_name is not None

@@ -31,6 +31,7 @@ def api_context_manager() -> Generator[ApiContext, None, None]:
     and grabs the request body.
     """
     with app.db_session() as db_session:
+        # TODO - verify this works with requests that don't have a body
         body = connexion.request.json
         # TODO - current user will be relevant when we get to auth
         current_user = app.current_user()
