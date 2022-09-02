@@ -44,11 +44,11 @@ def test_db_schema_non_session(monkeypatch):
     The monkeypatch setup of the test_db_schema fixture causes this issues
     so copied here with that adjusted
     """
-    schema_name = "mock_api_test_non_session_test_1234"
+    schema_name = "test_schema_session_1234"
 
     monkeypatch.setenv("DB_SCHEMA", schema_name)
-    monkeypatch.setenv("POSTGRES_DB", "mock-api")
-    monkeypatch.setenv("POSTGRES_USER", "mock_api_user")
+    monkeypatch.setenv("POSTGRES_DB", "main-db")
+    monkeypatch.setenv("POSTGRES_USER", "local_db_user")
     monkeypatch.setenv("POSTGRES_PASSWORD", "secret123")
     monkeypatch.setenv("ENVIRONMENT", "local")
 

@@ -2,7 +2,7 @@
 # Constants
 ##################################################
 
-APP_NAME := app
+APP_NAME := main-app
 
 # Adding this to the end of a script that outputs JSON will convert
 # it to a readable format with timestamps and color-coding.
@@ -70,7 +70,7 @@ stop:
 init-db: start-db sleep-5 db-upgrade
 
 start-db:
-	docker-compose up --detach mock-api-db
+	docker-compose up --detach main-db
 
 ## Destroy current DB, setup new one
 db-recreate: clean-docker-volumes init-db

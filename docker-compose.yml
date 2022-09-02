@@ -4,7 +4,7 @@ version: '3'
 
 services:
 
-  mock-api-db:
+  main-db:
     image: postgres:14-alpine
       # Docs for options to the postgres server command:
     # https://www.postgresql.org/docs/current/app-postgres.html
@@ -17,7 +17,7 @@ services:
       - dbdata:/var/lib/postgresql/data
 
   # Define one service for the application.
-  app:
+  main-app:
     # This service relies on building from a Dockerfile in this file directory,
     # not on an image repository.
     build: ./app
@@ -29,13 +29,13 @@ services:
       # NOTE: This takes precendence over the value specified
       # in local.env as we can't use localhost to get to the docker
       # container and instead use the alias defined above
-      - DB_HOST=mock-api-db
+      - DB_HOST=main-db
     platform: linux/amd64 # Fix running on Apple silicon
     # Mount application directory for local development.
     volumes:
       - ./app:/srv
     depends_on:
-      - "mock-api-db"
+      - "main-db"
 
 volumes:
   dbdata:

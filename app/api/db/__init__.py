@@ -30,8 +30,8 @@ class DbConfig:
 def get_db_config() -> DbConfig:
     db_config = DbConfig(
         host=os.getenv("DB_HOST", "localhost"),
-        name=os.getenv("POSTGRES_DB", "mock-api"),
-        username=os.getenv("POSTGRES_USER", "mock_api_user"),
+        name=os.getenv("POSTGRES_DB", "main-db"),
+        username=os.getenv("POSTGRES_USER", "local_db_user"),
         password=os.getenv("POSTGRES_PASSWORD"),
         schema=os.getenv("DB_SCHEMA", "public"),
         port=os.getenv("DB_PORT", "5432"),

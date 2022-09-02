@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 
-def load_local_env_vars(env_file: str = "local.env"):
+def load_local_env_vars(env_file: str = "local.env") -> None:
     """
     Load environment variables from the local.env so
     that they can be fetched with `os.getenv()` or with

@@ -60,11 +60,11 @@ def test_db_schema(monkeypatch_session):
     Create a test schema, if it doesn't already exist, and drop it after the
     test completes.
     """
-    schema_name = f"mock_api_test_{uuid.uuid4().int}"
+    schema_name = f"test_schema_{uuid.uuid4().int}"
 
     monkeypatch_session.setenv("DB_SCHEMA", schema_name)
-    monkeypatch_session.setenv("POSTGRES_DB", "mock-api")
-    monkeypatch_session.setenv("POSTGRES_USER", "mock_api_user")
+    monkeypatch_session.setenv("POSTGRES_DB", "main-db")
+    monkeypatch_session.setenv("POSTGRES_USER", "local_db_user")
     monkeypatch_session.setenv("POSTGRES_PASSWORD", "secret123")
     monkeypatch_session.setenv("ENVIRONMENT", "local")
 
