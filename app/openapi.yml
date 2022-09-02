@@ -11,6 +11,8 @@ servers:
 paths:
   /healthcheck:
     get:
+      tags:
+        - Health
       summary: Healthcheck for the API
       operationId: api.api.healthcheck_get
       responses:
@@ -24,6 +26,8 @@ paths:
 
   /eligibility-screener:
     post:
+      tags:
+        - Eligibility
       summary: Submit an eligibility screener
       operationId: api.eligibility.eligibility_screener_post
       responses:
