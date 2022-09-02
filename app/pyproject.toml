@@ -2,13 +2,17 @@
 name = "wic-mock-api"
 version = "0.1.0"
 description = "A Mock API wrapper around the SPIRIT MIS for the Special Supplemental Nutrition Program for Women, Infants, and Children (WIC)"
+packages = [{ include = "api" }]
 authors = ["Nava Engineering <engineering@navapbc.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 connexion = {extras = ["swagger-ui"], version = "^2.13.1"}
-SQLAlchemy = "^1.4.40"
+SQLAlchemy = {extras = ["mypy"], version = "^1.4.40"}
 Faker = "^14.1.0"
+alembic = "^1.8.1"
+psycopg2-binary = "^2.9.3"
+python-dotenv = "^0.20.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"
@@ -22,6 +26,14 @@ mypy = "^0.971"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+db-migrate-up = "api.db.migrations.run:up"
+db-migrate-down = "api.db.migrations.run:down"
+db-migrate-down-all = "api.db.migrations.run:downall"
+
+[tool.black]
+line-length = 100
 
 [tool.isort]
 multi_line_output = 3
@@ -48,3 +60,5 @@ warn_no_return = true
 warn_redundant_casts = true
 warn_unreachable = true
 warn_unused_ignores = true
+
+plugins = ["sqlalchemy.ext.mypy.plugin"]

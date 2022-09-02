@@ -1,11 +1,133 @@
+import uuid
+
+import _pytest.monkeypatch
 import pytest
+import sqlalchemy
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 import api.app as app_entry
+import api.db
+import api.logging
+
+logger = api.logging.get_logger(__name__)
+
+
+####################
+# Test DB session
+####################
+
+# From https://github.com/pytest-dev/pytest/issues/363
+@pytest.fixture(scope="session")
+def monkeypatch_session(request):
+    mpatch = _pytest.monkeypatch.MonkeyPatch()
+    yield mpatch
+    mpatch.undo()
+
+
+# From https://github.com/pytest-dev/pytest/issues/363
+@pytest.fixture(scope="module")
+def monkeypatch_module(request):
+    mpatch = _pytest.monkeypatch.MonkeyPatch()
+    yield mpatch
+    mpatch.undo()
+
+
+def exec_sql_admin(sql):
+    db_admin_config = api.db.get_db_config()
+    engine = api.db.create_db_engine(db_admin_config)
+    with engine.connect() as connection:
+        connection.execute(sql)
+
+
+def db_schema_create(schema_name):
+    """Create a database schema."""
+    db_config = api.db.get_db_config()
+    db_test_user = db_config.username
+
+    exec_sql_admin(f"CREATE SCHEMA IF NOT EXISTS {schema_name} AUTHORIZATION {db_test_user};")
+    logger.info("create schema %s", schema_name)
+
+
+def db_schema_drop(schema_name):
+    """Drop a database schema."""
+    exec_sql_admin(f"DROP SCHEMA {schema_name} CASCADE;")
+    logger.info("drop schema %s", schema_name)
+
+
+@pytest.fixture(scope="session")
+def test_db_schema(monkeypatch_session):
+    """
+    Create a test schema, if it doesn't already exist, and drop it after the
+    test completes.
+    """
+    schema_name = f"test_schema_{uuid.uuid4().int}"
+
+    monkeypatch_session.setenv("DB_SCHEMA", schema_name)
+    monkeypatch_session.setenv("POSTGRES_DB", "main-db")
+    monkeypatch_session.setenv("POSTGRES_USER", "local_db_user")
+    monkeypatch_session.setenv("POSTGRES_PASSWORD", "secret123")
+    monkeypatch_session.setenv("ENVIRONMENT", "local")
+
+    db_schema_create(schema_name)
+    try:
+        yield schema_name
+    finally:
+        db_schema_drop(schema_name)
+
+
+@pytest.fixture(scope="session")
+def test_db(test_db_schema):
+    """
+    Creates a test schema, directly creating all tables with SQLAlchemy. Schema
+    is dropped after the test completes.
+    """
+
+    # not used directly, but loads models into Base
+    from api.db.models.base import Base
+
+    engine = api.db.create_db_engine()
+    Base.metadata.create_all(bind=engine)
+
+    db_session = api.db.init()
+    db_session.close()
+    db_session.remove()
+
+    return engine
 
 
 @pytest.fixture
-def app():
-    return app_entry.create_app()
+def test_db_session(test_db):
+    # Based on https://docs.sqlalchemy.org/en/13/orm/session_transaction.html#joining-a-session-into-an-external-transaction-such-as-for-test-suites
+    connection = test_db.connect()
+    trans = connection.begin()
+    session = scoped_session(
+        sessionmaker(bind=connection, autocommit=False, expire_on_commit=False)
+    )
+
+    session.begin_nested()
+
+    @sqlalchemy.event.listens_for(session, "after_transaction_end")
+    def restart_savepoint(session, transaction):
+        if transaction.nested and not transaction._parent.nested:
+            session.begin_nested()
+
+    yield session
+
+    session.close()
+    trans.rollback()
+    connection.close()
+
+
+####################
+# Test App & Client
+####################
+
+
+@pytest.fixture
+def app(test_db_session):
+    return app_entry.create_app(
+        check_migrations_current=False, db_session_factory=test_db_session, do_close_db=False
+    )
 
 
 @pytest.fixture

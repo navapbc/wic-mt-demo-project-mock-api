@@ -1,8 +1,16 @@
-###########
+##################################################
 # Constants
-###########
+##################################################
 
-APP_NAME := app
+APP_NAME := main-app
+
+# Adding this to the end of a script that outputs JSON will convert
+# it to a readable format with timestamps and color-coding.
+# TODO - investigate if there's a simple/reasonable configurational
+# approach to just have the logs output in this manner to begin
+# they are ~almost there but there's a few pieces missing that I
+# want to circle back around on later.
+DECODE_LOG := 2>&1 | python3 -u api/logging/decodelog.py
 
 # A few commands need adjustments if they're run in CI, specify those here
 # TODO - when CI gets hooked up, actually test this.
@@ -26,14 +34,86 @@ else
 PY_RUN_CMD := poetry run
 endif
 
-run:
-	docker-compose up -d --build
+##################################################
+# API Build & Run
+##################################################
 
-run-logs:
-	docker-compose up --build
+build:
+	docker-compose build
+
+start:
+	docker-compose up --detach
+
+run-logs: start
+	docker-compose logs --follow --no-color $(APP_NAME) $(DECODE_LOG)
+
+
+init: build init-db
+
+clean-volumes: ## Remove project docker volumes (which includes the DB state)
+	docker-compose down --volumes
+
+stop:
+	docker-compose down
+
+##################################################
+# DB & migrations
+##################################################
+
+#########################
+# DB running / setup
+#########################
+
+# Docker starts the image for the DB but it's not quite
+# fully ready, so add a 5 second sleep so upgrade doesn't
+# fail because the DB hasn't started yet.
+init-db: start-db sleep-5 db-upgrade
+
+start-db:
+	docker-compose up --detach main-db
+
+## Destroy current DB, setup new one
+db-recreate: clean-docker-volumes init-db
+
+#########################
+# DB Migrations
+#########################
+
+alembic_config := ./api/db/migrations/alembic.ini
+alembic_cmd := $(PY_RUN_CMD) alembic --config $(alembic_config)
+
+db-upgrade: ## Apply pending migrations to db
+	$(PY_RUN_CMD) db-migrate-up $(DECODE_LOG)
+
+db-downgrade: ## Rollback last migration in db
+	$(PY_RUN_CMD) db-migrate-down $(DECODE_LOG)
+
+db-downgrade-all: ## Rollback all migrations
+	$(PY_RUN_CMD) db-migrate-down-all $(DECODE_LOG)
+
+check-migrate-msg:
+ifndef MIGRATE_MSG
+	$(error MIGRATE_MSG is undefined)
+endif
+
+db-migrate-create: check-migrate-msg
+	$(alembic_cmd) revision --autogenerate -m "$(MIGRATE_MSG)"
+
+MIGRATE_MERGE_MSG := Merge multiple heads
+db-migrate-merge-heads: ## Create a new migration that depends on all existing `head`s
+	$(alembic_cmd) merge heads -m "$(MIGRATE_MERGE_MSG)" $(args)
+
+
+##################################################
+# Testing
+##################################################
 
 test:
 	$(PY_RUN_CMD) pytest $(args)
+
+##################################################
+# Formatting and linting
+##################################################
 
 format:
 	$(PY_RUN_CMD) isort --atomic api tests
@@ -55,3 +135,12 @@ lint-poetry-version: ## Check poetry version
 lint-spectral:
 	docker run --rm --tty --cap-drop=ALL --network=none --read-only --volume=$(PWD):/tmp:ro \
 		stoplight/spectral:6 lint /tmp/openapi.yml --ruleset /tmp/.spectral.yaml $(SPECTRAL_POSTPROC)
+
+
+##################################################
+# Miscellaneous Utilities
+##################################################
+
+# Pauses for 5 seconds
+sleep-5:
+	sleep 5
