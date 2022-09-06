@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import uuid4
 
-from pydantic import UUID4, Field, validator
+from pydantic import UUID4, Field
 
 import api.logging
 from api.db.models.eligibility_models import EligibilityScreener
@@ -35,12 +35,10 @@ class EligibilityScreenerResponse(EligibilityScreenerSharedParams):
 
 
 def create_eligibility_screener(api_context: ApiContext) -> EligibilityScreenerResponse:
-    # TODO - the code this is based on does a lot of this in the
-    # API itself but I've always found that hard to read, so
-    # moving a lot more to this handler. Need to see how
-    # well that works out as more is added.
+    # Convert & validate the request body
     request = EligibilityScreenerRequest.parse_obj(api_context.request_body)
 
+    # Convert the request body into a DB record
     eligibility_screener = EligibilityScreener(
         # Specify the ID so we don't need to commit + refresh to get from DB
         eligibility_screener_id=uuid4(),
@@ -57,4 +55,5 @@ def create_eligibility_screener(api_context: ApiContext) -> EligibilityScreenerR
 
     api_context.db_session.add(eligibility_screener)
 
+    # Convert the DB object to a response
     return EligibilityScreenerResponse.from_orm(eligibility_screener)

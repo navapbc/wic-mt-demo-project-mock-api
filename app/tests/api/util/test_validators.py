@@ -5,11 +5,12 @@ import connexion
 import pytest
 from pydantic import Field, ValidationError
 
-from api.util.connexion_validators import get_custom_validator_map, log_validation_error
+from api.util.connexion_validators import get_custom_validator_map
 from api.util.error_handlers import (
     add_error_handlers_to_app,
     convert_pydantic_error_to_validation_exception,
     is_unexpected_validation_error,
+    log_validation_error,
 )
 from api.util.pydantic_util import PydanticBaseModel
 from api.util.response import ValidationErrorDetail, ValidationException, success_response

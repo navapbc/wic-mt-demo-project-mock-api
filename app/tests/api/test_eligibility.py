@@ -130,7 +130,7 @@ def test_post_eligibility_400_invalid_types(client, test_db_session):
         assert field in request
         assert "is not of type" in message
         assert error_type == "type"
-        assert incorrect_type == type(request[field]).__name__
+        assert incorrect_type == str(type(request[field]).__name__)
 
     # Nothing added to DB
     results = test_db_session.query(EligibilityScreener).all()

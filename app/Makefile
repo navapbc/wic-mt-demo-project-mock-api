@@ -6,6 +6,7 @@ APP_NAME := main-app
 
 # Adding this to the end of a script that outputs JSON will convert
 # it to a readable format with timestamps and color-coding.
+#
 # Note that you can also change the LOG_FORMAT env var to switch
 # between JSON & human readable format. This is left in place
 # in the event JSON is output from a process we don't log.

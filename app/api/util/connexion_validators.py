@@ -8,7 +8,6 @@ from connexion.decorators.validation import (
 from connexion.json_schema import Draft4RequestValidator, Draft4ResponseValidator
 from connexion.utils import is_null
 
-from api.util.error_handlers import log_validation_error
 from api.util.response import ValidationErrorDetail, ValidationException
 
 

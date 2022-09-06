@@ -10,7 +10,6 @@ from werkzeug.exceptions import (
     HTTPException,
     InternalServerError,
     NotFound,
-    ServiceUnavailable,
     Unauthorized,
 )
 
@@ -110,18 +109,6 @@ def is_unexpected_validation_error(error: ValidationErrorDetail) -> bool:
         or error.type.startswith("type_error")
         or error.type.startswith("value_error")
     )
-
-
-def validation_request_handler(validation_exception: ValidationException) -> Response:
-    for error in validation_exception.errors:
-        log_validation_error(validation_exception, error, is_unexpected_validation_error)
-
-    return error_response(
-        status_code=BadRequest,
-        message=validation_exception.message,
-        errors=validation_exception.errors,
-        data=validation_exception.data,
-    ).to_api_response()
 
 
 def log_validation_error(
