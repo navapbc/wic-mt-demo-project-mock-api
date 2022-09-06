@@ -22,9 +22,9 @@ class EligibilityScreener(Base, TimestampMixin):
     # MutableList wraps these arrays so mutations on the python
     # object array (eg. add()) get detected by the array.
     # See: https://docs.sqlalchemy.org/en/14/core/type_basics.html#sqlalchemy.types.ARRAY
-    eligibility_categories = Column(MutableList.as_mutable(ARRAY(Text)), nullable=True)
+    eligibility_categories: list[str] = Column(MutableList.as_mutable(ARRAY(Text)), nullable=True)
     has_prior_wic_enrollment = Column(Boolean, nullable=False)
-    eligibility_programs = Column(MutableList.as_mutable(ARRAY(Text)), nullable=True)
+    eligibility_programs: list[str] = Column(MutableList.as_mutable(ARRAY(Text)), nullable=True)
     household_size = Column(Integer, nullable=True)
     zip_code = Column(Text, nullable=False)
     applicant_notes = Column(Text, nullable=True)

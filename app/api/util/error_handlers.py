@@ -4,6 +4,7 @@ from types import TracebackType
 from typing import Callable, Optional, Tuple
 
 import pydantic
+from flask import Response
 from werkzeug.exceptions import (
     BadRequest,
     Forbidden,
@@ -14,7 +15,7 @@ from werkzeug.exceptions import (
 )
 
 import api.logging
-from api.util.response import Response, ValidationErrorDetail, ValidationException, error_response
+from api.util.response import ValidationErrorDetail, ValidationException, error_response
 
 logger = api.logging.get_logger(__name__)
 
@@ -90,7 +91,7 @@ def convert_pydantic_error_to_validation_exception(
 
         errors.append(
             ValidationErrorDetail(
-                type=err_type,  # type: ignore
+                type=err_type,
                 message=f'Error in field: "{err_field}". {err_message.capitalize()}.',
                 rule=None,
                 field=".".join(str(loc) for loc in e["loc"]),
