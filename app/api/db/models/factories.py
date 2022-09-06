@@ -72,3 +72,4 @@ class EligibilityScreenerFactory(BaseFactory):
     household_size = None
     zip_code = factory.Faker("postcode")
     applicant_notes = factory.Sequence(lambda n: f"Notes #{n}")
+    added_to_eligibility_screener_at = None

@@ -33,6 +33,7 @@ build-backend = "poetry.core.masonry.api"
 db-migrate-up = "api.db.migrations.run:up"
 db-migrate-down = "api.db.migrations.run:down"
 db-migrate-down-all = "api.db.migrations.run:downall"
+create-eligibility-screener-csv = "api.scripts.create_eligibility_screener_csv:main"
 
 [tool.black]
 line-length = 100
