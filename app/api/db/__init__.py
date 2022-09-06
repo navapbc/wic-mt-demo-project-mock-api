@@ -1,41 +1,34 @@
 import os
 import urllib.parse
 from contextlib import contextmanager
-from dataclasses import dataclass
 from typing import Any, Generator, Optional
 
 import psycopg2
 import sqlalchemy.pool as pool
+from pydantic import Field
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import api.logging
 from api.db.migrations.run import have_all_migrations_run
+from api.util.pydantic_util import PydanticBaseEnvConfig
 
 logger = api.logging.get_logger(__name__)
 
 
-@dataclass
-class DbConfig:
-    host: str
-    name: str
-    username: str
-    password: Optional[str]
-    schema: str
-    port: str
-    hide_sql_parameter_logs: bool = True
+class DbConfig(PydanticBaseEnvConfig):
+    host: str = Field("localhost", env="DB_HOST")
+    name: str = Field("main-db", env="POSTGRES_DB")
+    username: str = Field("local_db_user", env="POSTGRES_USER")
+    password: Optional[str] = Field(..., env="POSTGRES_PASSWORD")
+    db_schema: str = Field("public", env="DB_SCHEMA")
+    port: str = Field("5432", env="DB_PORT")
+    hide_sql_parameter_logs: bool = Field(True, env="HIDE_SQL_PARAMETER_LOGS")
 
 
 def get_db_config() -> DbConfig:
-    db_config = DbConfig(
-        host=os.getenv("DB_HOST", "localhost"),
-        name=os.getenv("POSTGRES_DB", "main-db"),
-        username=os.getenv("POSTGRES_USER", "local_db_user"),
-        password=os.getenv("POSTGRES_PASSWORD"),
-        schema=os.getenv("DB_SCHEMA", "public"),
-        port=os.getenv("DB_PORT", "5432"),
-    )
+    db_config = DbConfig()
 
     logger.info(
         "Constructed database configuration",
@@ -44,7 +37,7 @@ def get_db_config() -> DbConfig:
             "dbname": db_config.name,
             "username": db_config.username,
             "password": "***" if db_config.password is not None else None,
-            "schema": db_config.schema,
+            "db_schema": db_config.db_schema,
             "port": db_config.port,
             "hide_sql_parameter_logs": db_config.hide_sql_parameter_logs,
         },
@@ -153,7 +146,7 @@ def get_connection_parameters(db_config: DbConfig) -> dict[str, Any]:
         user=db_config.username,
         password=db_config.password,
         port=db_config.port,
-        options=f"-c search_path={db_config.schema}",
+        options=f"-c search_path={db_config.db_schema}",
         connect_timeout=3,
         **connect_args,
     )
@@ -189,7 +182,7 @@ def make_connection_uri(config: DbConfig) -> str:
     db_name = config.name
     username = config.username
     password = urllib.parse.quote(config.password) if config.password else None
-    schema = config.schema
+    schema = config.db_schema
     port = config.port
 
     netloc_parts = []

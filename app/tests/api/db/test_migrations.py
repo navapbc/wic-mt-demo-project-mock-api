@@ -1,5 +1,4 @@
-import os
-from pathlib import Path
+import logging  # noqa: B1
 
 import pytest
 from alembic import command
@@ -59,10 +58,11 @@ def test_db_schema_non_session(monkeypatch):
         db_schema_drop(schema_name)
 
 
-def test_db_setup_via_alembic_migration(test_db_schema_non_session):
-    # Change directory location so the relative script_location in alembic config works.
-    os.chdir(Path(__file__).parent.parent)
+def test_db_setup_via_alembic_migration(test_db_schema_non_session, logging_fix, caplog):
+    caplog.set_level(logging.INFO)  # noqa: B1
     command.upgrade(alembic_cfg, "head")
+    # Verify the migration ran by checking the logs
+    assert "Running upgrade" in caplog.text and "first migration" in caplog.text
 
 
 def test_db_init_with_migrations(test_db_schema_non_session):

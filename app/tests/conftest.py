@@ -1,3 +1,5 @@
+import logging.config  # noqa: B1
+import os
 import uuid
 
 import _pytest.monkeypatch
@@ -11,10 +13,10 @@ import api.logging
 
 logger = api.logging.get_logger(__name__)
 
-
 ####################
 # Test DB session
 ####################
+
 
 # From https://github.com/pytest-dev/pytest/issues/363
 @pytest.fixture(scope="session")
@@ -116,6 +118,42 @@ def test_db_session(test_db):
     session.close()
     trans.rollback()
     connection.close()
+
+
+@pytest.fixture(autouse=True, scope="session")
+def set_no_db_factories_alert():
+    """By default, ensure factories do not attempt to access the database.
+
+    The tests that need generated models to actually hit the database can pull
+    in the `initialize_factories_session` fixture to their test case to enable
+    factory writes to the database.
+    """
+    os.environ["DB_FACTORIES_DISABLE_DB_ACCESS"] = "1"
+
+
+@pytest.fixture
+def initialize_factories_session(monkeypatch, test_db_session):
+    monkeypatch.delenv("DB_FACTORIES_DISABLE_DB_ACCESS")
+
+    import api.db.models.factories as factories
+
+    logger.info("set factories db_session to %s", test_db_session)
+    factories.db_session = test_db_session
+
+
+####################
+# Logging
+####################
+
+
+@pytest.fixture
+def logging_fix(monkeypatch):
+    """Disable the application custom logging setup
+
+    Needed if the code under test calls api.util.logging.init() so that
+    tests using the caplog fixture don't break.
+    """
+    monkeypatch.setattr(logging.config, "dictConfig", lambda config: None)  # noqa: B1
 
 
 ####################

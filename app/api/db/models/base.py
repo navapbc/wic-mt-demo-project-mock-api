@@ -61,7 +61,6 @@ def utc_timestamp_gen():
 
 
 @declarative_mixin
-# This is annotated as a @declarative_mixin when we upgrade to SQLAlchemy 1.4
 class TimestampMixin:
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, default=utc_timestamp_gen, server_default=sqlnow()

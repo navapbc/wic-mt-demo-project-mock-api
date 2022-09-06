@@ -6,9 +6,6 @@ on:
       - main
     paths:
       - app/**
-  pull_request:
-    paths:
-      - app/**
 # this workflow should be updated/merged when WMDP-123. etc are merged
 jobs:
   lint:
@@ -21,7 +18,7 @@ jobs:
           echo "Placeholder until linting is installed"
           exit 0
   security:
-    runs-on: ubuntu-latest
+    runs-on: ubutntu-latest
     steps:
       - uses: actions/checkout@v2
 

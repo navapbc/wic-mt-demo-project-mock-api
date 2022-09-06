@@ -44,7 +44,7 @@ def test_make_connection_uri():
                 name="dbname",
                 username="foo",
                 password="bar",
-                schema="public",
+                db_schema="public",
                 port="5432",
             )
         )
@@ -58,7 +58,7 @@ def test_make_connection_uri():
                 name="dbname",
                 username="foo",
                 password=None,
-                schema="public",
+                db_schema="public",
                 port="5432",
             )
         )
@@ -76,6 +76,6 @@ def test_get_connection_parameters(monkeypatch):
         user=db_config.username,
         password=db_config.password,
         port=db_config.port,
-        options=f"-c search_path={db_config.schema}",
+        options=f"-c search_path={db_config.db_schema}",
         connect_timeout=3,
     )

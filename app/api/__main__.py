@@ -5,10 +5,9 @@
 #
 # https://docs.python.org/3/library/__main__.html
 
-import os
-
 import api.app
 import api.logging
+from api.app_config import AppConfig
 from api.util.local import load_local_env_vars
 
 logger = api.logging.get_logger(__package__)
@@ -16,16 +15,14 @@ logger = api.logging.get_logger(__package__)
 
 def main():
     load_local_env_vars()
-
-    # TODO - can use a pydantic config to get this instead
-    environment = os.environ.get("ENVIRONMENT", "unknown")
+    app_config = AppConfig()
 
     api.logging.init(__package__)
     logger.info("Running API Application")
 
     app = api.app.create_app()
 
-    if environment == "local":
+    if app_config.environment == "local":
         # If python files are changed, the app will auto-reload
         # Note this doesn't have the OpenAPI yaml file configured at the moment
         app.run(port=8080, use_reloader=True, reloader_type="stat")
