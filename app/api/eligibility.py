@@ -20,6 +20,11 @@ def eligibility_screener_post() -> flask.Response:
 
         api_context.db_session.commit()
 
+        log_extra = api_context.get_log_extra() | {
+            "eligibility_screener_id": response.eligibility_screener_id
+        }
+        logger.info("Successfully submitted eligibility screener", extra=log_extra)
+
         return response_util.success_response(
             message="Added eligibility screener to DB",
             data=response.dict(),
