@@ -27,6 +27,7 @@ class EligibilityScreener(Base, TimestampMixin):
     eligibility_programs: list[str] = Column(MutableList.as_mutable(ARRAY(Text)), nullable=True)
     household_size = Column(Integer, nullable=True)
     zip_code: str = Column(Text, nullable=False)
+    wic_clinic: str = Column(Text, nullable=False)
     applicant_notes = Column(Text, nullable=True)
 
     added_to_eligibility_screener_at = Column(TIMESTAMP(timezone=True), nullable=True)
