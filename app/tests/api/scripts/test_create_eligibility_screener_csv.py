@@ -96,7 +96,7 @@ def test_create_eligibility_screener_csv(
         )
     )
 
-    create_eligibility_screener_csv(test_db_session, tmp_file_path)
+    create_eligibility_screener_csv(test_db_session, "s3://bucket/path/to")
     csv_rows = read_csv_records(tmp_file_path)
     validate_csv_records(db_records, csv_rows, test_db_session)
 

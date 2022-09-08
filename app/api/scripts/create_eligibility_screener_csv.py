@@ -1,5 +1,6 @@
 import csv
 from dataclasses import asdict, dataclass
+from smart_open import open
 
 from sqlalchemy.orm import scoped_session
 
