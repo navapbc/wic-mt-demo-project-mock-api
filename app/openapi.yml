@@ -11,6 +11,8 @@ servers:
 paths:
   /healthcheck:
     get:
+      tags:
+        - Health
       summary: Healthcheck for the API
       operationId: api.api.healthcheck_get
       responses:
@@ -24,6 +26,8 @@ paths:
 
   /eligibility-screener:
     post:
+      tags:
+        - Eligibility
       summary: Submit an eligibility screener
       operationId: api.eligibility.eligibility_screener_post
       responses:
@@ -38,7 +42,7 @@ paths:
                       data:
                         $ref: "#/components/schemas/EligibilityScreenerResponse"
         "400":
-          description: TODO - figure out error codes we actually will use
+          description: An unsuccessful request returns a 400 status code if one or more errors occurred.
           content:
             application/json:
               schema:
@@ -52,28 +56,85 @@ paths:
 
 components:
   schemas:
-    EligibilityScreenerRequest:
+    EligibilityScreenerBase:
       type: object
       properties:
         first_name:
           type: string
+          example: Jane
+          description: The applicants first name
         last_name:
           type: string
+          example: Doe
+          description: The applicants last name
         phone_number:
           type: string
           example: "224-705-2345"
           pattern: '^([0-9]|\*){3}\-([0-9]|\*){3}\-[0-9]{4}$'
+        eligibility_categories:
+          type: array
+          items:
+            type: string
+            enum:
+              - "pregnant"
+              - "baby"
+              - "guardian"
+              - "loss"
+          example: ["pregnant"]
+          description: The list of categories that make the applicant eligible
+        has_prior_wic_enrollment:
+          type: boolean
+          example: false
+          description: Whether or not the applicant or anyone in their household has prior WIC enrollment
+        eligibility_programs:
+          type: array
+          items:
+            type: string
+            enum:
+              - "insurance"
+              - "snap"
+              - "tanf"
+          example: ["insurance", "snap"]
+          description: Other programs the applicant is already enrolled in
+        household_size:
+          type: integer
           nullable: true
-        
-      required: ["first_name", "last_name"]
+          example: 1
+          description: Household size - only necessary if no other current eligibility programs
+        zip_code:
+          type: string
+          pattern: '^[0-9]{5}((?:-[0-9]{4})?|(?:-\*{4})?)$'
+          example: "12345"
+          description: The ZIP code of the applicant
+        applicant_notes:
+          type: string
+          nullable: true
+          example: "Example notes"
+          description: Any additional applicant notes
+
+    EligibilityScreenerRequest:
+      allOf:
+        - $ref: "#/components/schemas/EligibilityScreenerBase"
+
+    EligibilityScreenerResponse:
+      type: object
+      properties:
+        eligibility_screener_id:
+          type: string
+          format: uuid
+          example: "2f0f58a0-fcad-465b-b474-ee6c961cd6e3"
+      allOf:
+        - $ref: "#/components/schemas/EligibilityScreenerBase"
 
     SuccessfulResponse:
       type: object
       properties:
         status_code:
           type: integer
+          example: 201
         message:
           type: string
+          example: "success"
         data:
           oneOf:
             - type: array
@@ -90,8 +151,10 @@ components:
       properties:
         status_code:
           type: integer
+          example: 400
         message:
           type: string
+          example: "Unable to add record"
         data:
           oneOf:
             - type: array
@@ -136,12 +199,6 @@ components:
           type: string
       additionalProperties: false
 
-    EligibilityScreenerResponse:
-      type: object
-      properties:
-        eligibility_screener_id:
-          type: string
-          format: uuid
-          example: "2f0f58a0-fcad-465b-b474-ee6c961cd6e3"
+
 
 
