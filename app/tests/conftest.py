@@ -1,9 +1,10 @@
 import logging.config  # noqa: B1
 import os
 import uuid
-import moto
-import boto3
+
 import _pytest.monkeypatch
+import boto3
+import moto
 import pytest
 import sqlalchemy
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -178,6 +179,7 @@ def client(app):
 # AWS Mock Fixtures
 ####################
 
+
 @pytest.fixture
 def reset_aws_env_vars(monkeypatch):
     # Reset the env vars so you can't accidentally connect
@@ -188,16 +190,19 @@ def reset_aws_env_vars(monkeypatch):
     monkeypatch.setenv("AWS_SESSION_TOKEN", "testing")
     monkeypatch.setenv("AWS_DEFAULT_REGION", "us-east-1")
 
+
 @pytest.fixture
 def mock_s3(reset_aws_env_vars):
     with moto.mock_s3():
         yield boto3.resource("s3")
+
 
 @pytest.fixture
 def mock_s3_bucket_resource(mock_s3):
     bucket = mock_s3.Bucket("test_bucket")
     bucket.create()
     yield bucket
+
 
 @pytest.fixture
 def mock_s3_bucket(mock_s3_bucket_resource):

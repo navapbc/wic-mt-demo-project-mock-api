@@ -1,8 +1,8 @@
 import csv
 import os
 from dataclasses import asdict, dataclass
-from smart_open import open
 
+from smart_open import open as smart_open
 from sqlalchemy.orm import scoped_session
 
 import api.logging
@@ -125,7 +125,7 @@ def generate_csv_file(records: list[EligiblityScreenerCsvRecord], output_file_pa
 
     # TODO - if no records, should we be fine just making a file
     # with the headers or do we want to do something more?
-    with open(output_file_path, "w") as outbound_file:
+    with smart_open(output_file_path, "w") as outbound_file:
         csv_writer = csv.DictWriter(
             outbound_file,
             fieldnames=list(asdict(ELIGIBILITY_SCREENER_CSV_HEADER).keys()),
@@ -151,10 +151,17 @@ def update_db_record_timestamp(eligibility_screener_records: list[EligibilityScr
 
 
 def main() -> None:
+
     # Initialize DB session
     with script_context_manager() as script_context:
         # TODO - the output path will likely be an S3 path based on an env var
         # but for this first iteration, just make it a file in the same folder
+
+        eligibility_screener_path = os.getenv("ELIGIBILITY_SCREENER_CSV_OUTPUT_PATH", None)
+        if not eligibility_screener_path:
+            raise Exception("Please specify an ELIGIBILITY_SCREENER_CSV_OUTPUT_PATH env var")
         file_name = utcnow().strftime("%Y-%m-%d-%H-%M-%S") + "-eligibility-screener.csv"
 
-        create_eligibility_screener_csv(script_context.db_session, file_name)
+        output_file_path = os.path.join(eligibility_screener_path, file_name)
+
+        create_eligibility_screener_csv(script_context.db_session, output_file_path)
