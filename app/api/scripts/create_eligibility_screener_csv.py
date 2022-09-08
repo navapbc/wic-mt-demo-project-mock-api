@@ -1,4 +1,5 @@
 import csv
+import os
 from dataclasses import asdict, dataclass
 
 from sqlalchemy.orm import scoped_session
@@ -6,7 +7,7 @@ from sqlalchemy.orm import scoped_session
 import api.logging
 from api.db.models.eligibility_models import EligibilityScreener
 from api.scripts.util.script_util import script_context_manager
-from api.util.datetime_util import utcnow
+from api.util.datetime_util import adjust_timezone, utcnow
 from api.util.string_utils import blank_for_null, join_list
 
 logger = api.logging.get_logger(__name__)
@@ -88,10 +89,17 @@ def convert_eligibility_screener_records_for_csv(
     out_records: list[EligiblityScreenerCsvRecord] = []
     out_records.append(ELIGIBILITY_SCREENER_CSV_HEADER)
 
+    # Env var for adjusting the timezone of the output
+    timezone_for_output = os.getenv("ELIGIBILITY_SCREENER_TIMEZONE", "UTC")
+
     for record in records:
         # TODO - do we want to convert this timestamp to a different timezone beside UTC?
         # Create a timezone in a human-readable format: 09/06/22 05:56 PM
-        submitted_datetime = record.created_at.strftime(DATETIME_OUTPUT_FORMAT)
+        submitted_datetime = adjust_timezone(record.created_at, timezone_for_output).strftime(
+            DATETIME_OUTPUT_FORMAT
+        )
+        print(record.created_at)
+        print(adjust_timezone(record.created_at, timezone_for_output))
 
         out_record = EligiblityScreenerCsvRecord(
             first_name=record.first_name,
