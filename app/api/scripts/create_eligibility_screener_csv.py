@@ -98,8 +98,6 @@ def convert_eligibility_screener_records_for_csv(
         submitted_datetime = adjust_timezone(record.created_at, timezone_for_output).strftime(
             DATETIME_OUTPUT_FORMAT
         )
-        print(record.created_at)
-        print(adjust_timezone(record.created_at, timezone_for_output))
 
         out_record = EligiblityScreenerCsvRecord(
             first_name=record.first_name,
