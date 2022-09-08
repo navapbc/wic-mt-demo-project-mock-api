@@ -3,10 +3,6 @@ import pytest
 from api.db.models.eligibility_models import EligibilityScreener
 from api.db.models.factories import EligibilityScreenerFactory
 
-# Just validating this is setup correctly
-# as the API we have implemented at the moment
-# doesn't use it.
-
 params = {
     "first_name": "bob",
     "last_name": "smith",

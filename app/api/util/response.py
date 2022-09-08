@@ -2,14 +2,7 @@ from dataclasses import asdict, dataclass
 from typing import Any, Optional, Type
 
 import flask
-from werkzeug.exceptions import (
-    BadRequest,
-    Conflict,
-    Forbidden,
-    HTTPException,
-    NotFound,
-    ServiceUnavailable,
-)
+from werkzeug.exceptions import HTTPException
 
 
 @dataclass
@@ -78,13 +71,7 @@ def success_response(
 
 
 def error_response(
-    status_code: HTTPException
-    | Type[HTTPException]
-    | Type[BadRequest]
-    | Type[Conflict]
-    | Type[ServiceUnavailable]
-    | Type[NotFound]
-    | Type[Forbidden],
+    status_code: HTTPException | Type[HTTPException],
     message: str,
     errors: list[ValidationErrorDetail],
     data: Optional[dict | list[dict]] = None,
