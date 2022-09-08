@@ -40,27 +40,6 @@ paths:
           application/json:
             schema:
               $ref: "#components/schemas/User"
-  /user-invalid-response:
-    post:
-      summary: Test API
-      operationId: tests.api.util.test_validators.post_user_invalid_response
-      responses:
-        200:
-          description: greeting response
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/SuccessfulResponse'
-                  - properties:
-                      data:
-                        $ref: "#/components/schemas/User"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#components/schemas/User"
 
 components:
   schemas:
