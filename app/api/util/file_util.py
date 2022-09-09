@@ -39,10 +39,8 @@ def get_file_name(path: str) -> str:
 ##################################
 
 
-def get_s3_client(
-    bucket_name: str, boto_session: Optional[boto3.Session] = None
-) -> botocore.client.BaseClient:
-    """Returns the appropriate S3 client for a given bucket"""
+def get_s3_client(boto_session: Optional[boto3.Session] = None) -> botocore.client.BaseClient:
+    """Returns an S3 client, wrapping around boiler plate if you already have a session"""
     if boto_session:
         return boto_session.client("s3")
 
@@ -79,7 +77,7 @@ def list_files(
         if prefix and not prefix.endswith("/"):
             prefix = prefix + "/"
 
-        s3 = get_s3_client(bucket_name, boto_session)
+        s3 = get_s3_client(boto_session)
 
         # When the delimiter is provided, s3 knows to stop listing keys that contain it (starting after the prefix).
         # https://docs.aws.amazon.com/AmazonS3/latest/dev/ListingKeysHierarchy.html
