@@ -619,6 +619,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "types-pytz"
+version = "2022.2.1.0"
+description = "Typing stubs for pytz"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "typing-extensions"
 version = "4.3.0"
 description = "Backported and Experimental Type Hints for Python 3.7+"
@@ -653,7 +661,7 @@ watchdog = ["watchdog"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "7f63b72928d8c83f84395f1f9f2188b9221af397bb458387a2a15c3dcaac86b9"
+content-hash = "4bf342faeaa14e09623c4673c7f9623a5d6af0f88943903d33af36efeb3b183e"
 
 [metadata.files]
 alembic = []
@@ -896,6 +904,10 @@ sqlalchemy2-stubs = [
 swagger-ui-bundle = []
 toml = []
 tomli = []
+types-pytz = [
+    {file = "types-pytz-2022.2.1.0.tar.gz", hash = "sha256:47cfb19c52b9f75896440541db392fd312a35b279c6307a531db71152ea63e2b"},
+    {file = "types_pytz-2022.2.1.0-py3-none-any.whl", hash = "sha256:50ead2254b524a3d4153bc65d00289b66898060d2938e586170dce918dbaf3b3"},
+]
 typing-extensions = []
 urllib3 = []
 werkzeug = []
