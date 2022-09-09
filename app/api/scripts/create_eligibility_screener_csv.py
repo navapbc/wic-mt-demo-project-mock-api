@@ -94,7 +94,6 @@ def convert_eligibility_screener_records_for_csv(
     timezone_for_output = os.getenv("ELIGIBILITY_SCREENER_TIMEZONE", "UTC")
 
     for record in records:
-        # TODO - do we want to convert this timestamp to a different timezone beside UTC?
         # Create a timezone in a human-readable format: 09/06/22 05:56 PM
         submitted_datetime = adjust_timezone(record.created_at, timezone_for_output).strftime(
             DATETIME_OUTPUT_FORMAT
@@ -120,11 +119,8 @@ def convert_eligibility_screener_records_for_csv(
 
 def generate_csv_file(records: list[EligiblityScreenerCsvRecord], output_file_path: str) -> None:
     logger.info("Generating eligibility screener CSV at %s", output_file_path)
-    # TODO - when we want to also support S3, change this to
-    # use the smart_open library which will handle S3 + local files
 
-    # TODO - if no records, should we be fine just making a file
-    # with the headers or do we want to do something more?
+    # smart_open can write files to local &
     with smart_open(output_file_path, "w") as outbound_file:
         csv_writer = csv.DictWriter(
             outbound_file,
@@ -151,14 +147,17 @@ def update_db_record_timestamp(eligibility_screener_records: list[EligibilityScr
 
 
 def main() -> None:
-    # Initialize DB session
+    # Initialize DB session / logging / env vars
     with script_context_manager() as script_context:
-        # TODO comment
+        # Build the path for the output file
+        # This will create a file in the folder specified like:
+        # s3://your-bucket/path/to/2022-09-09-12-00-00-eligibility-screener.csv
+        # The file path can be either S3 or local disk.
         eligibility_screener_path = os.getenv("ELIGIBILITY_SCREENER_CSV_OUTPUT_PATH", None)
         if not eligibility_screener_path:
             raise Exception("Please specify an ELIGIBILITY_SCREENER_CSV_OUTPUT_PATH env var")
-        file_name = utcnow().strftime("%Y-%m-%d-%H-%M-%S") + "-eligibility-screener.csv"
 
+        file_name = utcnow().strftime("%Y-%m-%d-%H-%M-%S") + "-eligibility-screener.csv"
         output_file_path = os.path.join(eligibility_screener_path, file_name)
 
         create_eligibility_screener_csv(script_context.db_session, output_file_path)
