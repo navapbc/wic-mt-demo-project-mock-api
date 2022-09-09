@@ -108,7 +108,7 @@ def convert_eligibility_screener_records_for_csv(
             eligibility_programs=join_list(record.eligibility_programs),
             household_size=blank_for_null(record.household_size),
             zip_code=record.zip_code,
-            chosen_wic_clinic="TODO",
+            chosen_wic_clinic=record.wic_clinic,
             applicant_notes=blank_for_null(record.applicant_notes),
             submitted_datetime=submitted_datetime,
         )

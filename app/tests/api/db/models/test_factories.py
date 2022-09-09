@@ -12,6 +12,7 @@ params = {
     "eligibility_programs": ["tanf", "snap"],
     "household_size": 3,
     "zip_code": "12345-6789",
+    "wic_clinic": "example clinic",
     "applicant_notes": "notes?",
 }
 

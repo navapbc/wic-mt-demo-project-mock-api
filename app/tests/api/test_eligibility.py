@@ -13,6 +13,7 @@ base_request = {
     "eligibility_programs": ["tanf"],
     "household_size": None,
     "zip_code": "12345",
+    "wic_clinic": "Example Clinic\n1234 Main Street Cityville, MT 12345",
     "applicant_notes": "example_notes",
 }
 
@@ -85,6 +86,7 @@ def test_post_eligibility_400_missing_required_fields(client, api_auth_token, te
         "phone_number",
         "has_prior_wic_enrollment",
         "zip_code",
+        "wic_clinic",
     ]
     assert len(error_list) == len(
         required_fields

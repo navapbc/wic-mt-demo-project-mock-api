@@ -120,6 +120,10 @@ components:
           pattern: '^[0-9]{5}((?:-[0-9]{4})?|(?:-\*{4})?)$'
           example: "12345"
           description: The ZIP code of the applicant
+        wic_clinic:
+          type: string
+          example: "BEAVERHEAD CPH WIC\n41 Barrett Street Dillon, MT 59725"
+          description: The full address of the chosen WIC clinic
         applicant_notes:
           type: string
           nullable: true

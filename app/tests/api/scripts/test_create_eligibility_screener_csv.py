@@ -53,7 +53,7 @@ def validate_csv_records(db_records, csv_records, test_db_session):
             db_record.household_size
         )
         assert csv_record[ELIGIBILITY_SCREENER_CSV_HEADER.zip_code] == db_record.zip_code
-        assert csv_record[ELIGIBILITY_SCREENER_CSV_HEADER.chosen_wic_clinic] == "TODO"
+        assert csv_record[ELIGIBILITY_SCREENER_CSV_HEADER.chosen_wic_clinic] == db_record.wic_clinic
         assert csv_record[ELIGIBILITY_SCREENER_CSV_HEADER.applicant_notes] == blank_for_null(
             db_record.applicant_notes
         )
@@ -156,7 +156,7 @@ def test_convert_eligibility_screener_records_for_csv():
         eligibility_programs="tanf\nsnap",
         household_size="0",
         zip_code=eligibility_screener.zip_code,
-        chosen_wic_clinic="TODO",
+        chosen_wic_clinic=eligibility_screener.wic_clinic,
         applicant_notes="abcd1234",
         submitted_datetime=now.strftime(DATETIME_OUTPUT_FORMAT),
     )
