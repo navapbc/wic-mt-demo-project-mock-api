@@ -37,6 +37,8 @@ def get_file_name(path: str) -> str:
 ##################################
 # S3 Utilities
 ##################################
+
+
 def get_s3_client(
     bucket_name: str, boto_session: Optional[boto3.Session] = None
 ) -> botocore.client.BaseClient:

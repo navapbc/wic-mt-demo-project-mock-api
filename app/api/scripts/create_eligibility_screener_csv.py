@@ -120,7 +120,7 @@ def convert_eligibility_screener_records_for_csv(
 def generate_csv_file(records: list[EligiblityScreenerCsvRecord], output_file_path: str) -> None:
     logger.info("Generating eligibility screener CSV at %s", output_file_path)
 
-    # smart_open can write files to local &
+    # smart_open can write files to local & S3
     with smart_open(output_file_path, "w") as outbound_file:
         csv_writer = csv.DictWriter(
             outbound_file,
