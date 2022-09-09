@@ -136,6 +136,12 @@ lint-spectral:
 	docker run --rm --tty --cap-drop=ALL --network=none --read-only --volume=$(PWD):/tmp:ro \
 		stoplight/spectral:6 lint /tmp/openapi.yml --ruleset /tmp/.spectral.yaml $(SPECTRAL_POSTPROC)
 
+##################################################
+# Scripts
+##################################################
+
+create-eligibility-screener-csv:
+	$(PY_RUN_CMD) create-eligibility-screener-csv
 
 ##################################################
 # Miscellaneous Utilities

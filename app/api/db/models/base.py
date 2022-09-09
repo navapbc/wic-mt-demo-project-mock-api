@@ -62,11 +62,11 @@ def utc_timestamp_gen():
 
 @declarative_mixin
 class TimestampMixin:
-    created_at = Column(
+    created_at: datetime = Column(
         TIMESTAMP(timezone=True), nullable=False, default=utc_timestamp_gen, server_default=sqlnow()
     )
 
-    updated_at = Column(
+    updated_at: datetime = Column(
         TIMESTAMP(timezone=True),
         nullable=False,
         default=same_as_created_at,
