@@ -109,7 +109,7 @@ def convert_eligibility_screener_records_for_csv(
             eligibility_programs=join_list(record.eligibility_programs),
             household_size=blank_for_null(record.household_size),
             zip_code=record.zip_code,
-            chosen_wic_clinic="TODO",
+            chosen_wic_clinic=record.wic_clinic,
             applicant_notes=blank_for_null(record.applicant_notes),
             submitted_datetime=submitted_datetime,
         )
@@ -151,12 +151,9 @@ def update_db_record_timestamp(eligibility_screener_records: list[EligibilityScr
 
 
 def main() -> None:
-
     # Initialize DB session
     with script_context_manager() as script_context:
-        # TODO - the output path will likely be an S3 path based on an env var
-        # but for this first iteration, just make it a file in the same folder
-
+        # TODO comment
         eligibility_screener_path = os.getenv("ELIGIBILITY_SCREENER_CSV_OUTPUT_PATH", None)
         if not eligibility_screener_path:
             raise Exception("Please specify an ELIGIBILITY_SCREENER_CSV_OUTPUT_PATH env var")

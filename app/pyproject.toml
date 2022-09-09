@@ -18,6 +18,7 @@ factory-boy = "^3.2.1"
 botocore = "^1.27.67"
 boto3 = "~1.24.67"
 smart-open = "^6.1.0"
+pytz = "^2022.2.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.0.0"

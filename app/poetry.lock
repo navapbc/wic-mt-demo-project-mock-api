@@ -640,7 +640,11 @@ cli = ["click (>=5.0)"]
 name = "pytz"
 version = "2022.2.1"
 description = "World timezone definitions, modern and historical"
+<<<<<<< HEAD
 category = "dev"
+=======
+category = "main"
+>>>>>>> main
 optional = false
 python-versions = "*"
 

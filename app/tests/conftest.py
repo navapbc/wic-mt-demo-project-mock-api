@@ -175,6 +175,13 @@ def client(app):
     return app.app.test_client()
 
 
+@pytest.fixture
+def api_auth_token(monkeypatch):
+    auth_token = "abcd1234"
+    monkeypatch.setenv("API_AUTH_TOKEN", auth_token)
+    return auth_token
+
+
 ####################
 # AWS Mock Fixtures
 ####################

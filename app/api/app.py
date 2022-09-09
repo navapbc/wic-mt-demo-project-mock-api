@@ -1,13 +1,15 @@
 import os
 from contextlib import contextmanager
-from typing import Any, Generator, Optional
+from typing import Generator, Optional
 
 import connexion
 from flask import g
 from sqlalchemy.orm import scoped_session
+from werkzeug.exceptions import Unauthorized
 
 import api.db as db
 import api.logging
+from api.auth.api_key_auth import User
 from api.util.connexion_validators import get_custom_validator_map
 from api.util.error_handlers import add_error_handlers_to_app
 
@@ -84,11 +86,11 @@ def db_session(close: bool = False) -> Generator[scoped_session, None, None]:
         yield session_scoped
 
 
-def current_user() -> Any:  # TODO - typing
+def current_user() -> User:
     current = g.get("current_user")
     if current is None:
-        # TODO - should be an exception when we add auth
-        logger.warning("No current user found for request")
+        logger.error("No current user found for request")
+        raise Unauthorized
     return current
 
 
