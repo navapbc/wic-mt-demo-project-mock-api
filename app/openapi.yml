@@ -4,6 +4,10 @@ info:
   description: A Mock API wrapper around the SPIRIT MIS for the Special Supplemental Nutrition Program for Women, Infants, and Children (WIC)
   version: "2022-06-21"
 
+security:
+  - api_key: []
+  
+
 servers:
   - url: /v1
     description: Development server
@@ -11,6 +15,8 @@ servers:
 paths:
   /healthcheck:
     get:
+      security:
+        - {} # No authentication required
       tags:
         - Health
       summary: Healthcheck for the API
@@ -26,6 +32,8 @@ paths:
 
   /eligibility-screener:
     post:
+      security:
+        - api_key: []
       tags:
         - Eligibility
       summary: Submit an eligibility screener
@@ -55,6 +63,12 @@ paths:
 
 
 components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: X-Auth
+      in: header
+      x-apikeyInfoFunc: api.auth.api_key_auth.api_key_auth
   schemas:
     EligibilityScreenerBase:
       type: object
