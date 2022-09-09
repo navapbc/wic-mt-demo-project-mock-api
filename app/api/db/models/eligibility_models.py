@@ -1,3 +1,5 @@
+from datetime import datetime
+from typing import Optional
 from uuid import UUID
 
 from sqlalchemy import TIMESTAMP, Boolean, Column, Integer, Text
@@ -23,11 +25,13 @@ class EligibilityScreener(Base, TimestampMixin):
     # object array (eg. add()) get detected by the array.
     # See: https://docs.sqlalchemy.org/en/14/core/type_basics.html#sqlalchemy.types.ARRAY
     eligibility_categories: list[str] = Column(MutableList.as_mutable(ARRAY(Text)), nullable=True)
-    has_prior_wic_enrollment = Column(Boolean, nullable=False)
+    has_prior_wic_enrollment: Optional[bool] = Column(Boolean, nullable=False)
     eligibility_programs: list[str] = Column(MutableList.as_mutable(ARRAY(Text)), nullable=True)
-    household_size = Column(Integer, nullable=True)
+    household_size: Optional[int] = Column(Integer, nullable=True)
     zip_code: str = Column(Text, nullable=False)
     wic_clinic: str = Column(Text, nullable=False)
-    applicant_notes = Column(Text, nullable=True)
+    applicant_notes: Optional[str] = Column(Text, nullable=True)
 
-    added_to_eligibility_screener_at = Column(TIMESTAMP(timezone=True), nullable=True)
+    added_to_eligibility_screener_at: Optional[datetime] = Column(
+        TIMESTAMP(timezone=True), nullable=True
+    )

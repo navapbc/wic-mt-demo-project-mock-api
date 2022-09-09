@@ -6,6 +6,7 @@ import connexion
 
 import api.app as app
 import api.db as db
+from api.auth.api_key_auth import User
 
 
 @dataclass
@@ -17,8 +18,15 @@ class ApiContext:
     """
 
     request_body: Any
-    current_user: Any  # TODO - type
+    current_user: User
     db_session: db.scoped_session
+
+    def get_log_extra(self) -> dict[str, Any]:
+        """
+        Utility method for getting params to attach to the log as
+         `logger.info("msg", extra=api_context.get_log_extra())`
+        """
+        return {"user_id": self.current_user.user_id}
 
 
 @contextmanager
@@ -31,9 +39,14 @@ def api_context_manager() -> Generator[ApiContext, None, None]:
     and grabs the request body.
     """
     with app.db_session() as db_session:
-        # TODO - verify this works with requests that don't have a body
-        body = connexion.request.json
-        # TODO - current user will be relevant when we get to auth
+        # Attach the request body if present
+        if connexion.request.is_json:
+            body = connexion.request.json
+        else:
+            body = {}
+
+        # Current user is attached in api_key_auth.py
+        # during authentication
         current_user = app.current_user()
 
         yield ApiContext(body, current_user, db_session)

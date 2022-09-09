@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime, timezone
 
 import pytest
 
@@ -159,3 +160,18 @@ def test_convert_eligibility_screener_records_for_csv():
         applicant_notes="abcd1234",
         submitted_datetime=now.strftime(DATETIME_OUTPUT_FORMAT),
     )
+
+
+def test_convert_eligibility_screener_records_for_csv_timezone_override(monkeypatch):
+    # Make now a static time for testing timezone conversion
+    now = datetime(2022, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+
+    # Set the environment var to make it convert to mountain time
+    monkeypatch.setenv("ELIGIBILITY_SCREENER_TIMEZONE", "US/Mountain")
+
+    eligibility_screener = EligibilityScreenerFactory.build(created_at=now)
+    csv_records = convert_eligibility_screener_records_for_csv([eligibility_screener])
+    assert len(csv_records) == 2
+    assert csv_records[0] == ELIGIBILITY_SCREENER_CSV_HEADER
+    # Verify the timezone is 7 hours earlier than the UTC time specified above
+    assert csv_records[1].submitted_datetime == "01/01/22 05:00 AM"

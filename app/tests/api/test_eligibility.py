@@ -18,9 +18,11 @@ base_request = {
 }
 
 
-def test_post_eligibility_201(client, test_db_session):
+def test_post_eligibility_201(client, api_auth_token, test_db_session):
     request = base_request | {}
-    response = client.post("/v1/eligibility-screener", json=request)
+    response = client.post(
+        "/v1/eligibility-screener", json=request, headers={"X-Auth": api_auth_token}
+    )
 
     assert response.status_code == 201
 
@@ -42,13 +44,15 @@ def test_post_eligibility_201(client, test_db_session):
     )
 
 
-def test_post_eligibility_201_empty_arrays(client, test_db_session):
+def test_post_eligibility_201_empty_arrays(client, api_auth_token, test_db_session):
     # Verify that null and empty arrays for the enums behave the same.
     request = base_request | {
         "eligibility_categories": [],
         "eligibility_programs": [],
     }
-    response = client.post("/v1/eligibility-screener", json=request)
+    response = client.post(
+        "/v1/eligibility-screener", json=request, headers={"X-Auth": api_auth_token}
+    )
 
     assert response.status_code == 201
 
@@ -70,9 +74,9 @@ def test_post_eligibility_201_empty_arrays(client, test_db_session):
     )
 
 
-def test_post_eligibility_400_missing_required_fields(client, test_db_session):
+def test_post_eligibility_400_missing_required_fields(client, api_auth_token, test_db_session):
     # Send an empty post - should fail validation
-    response = client.post("/v1/eligibility-screener", json={})
+    response = client.post("/v1/eligibility-screener", json={}, headers={"X-Auth": api_auth_token})
     assert response.status_code == 400
 
     error_list = response.get_json()["errors"]
@@ -98,7 +102,7 @@ def test_post_eligibility_400_missing_required_fields(client, test_db_session):
     assert len(results) == 0
 
 
-def test_post_eligibility_400_invalid_types(client, test_db_session):
+def test_post_eligibility_400_invalid_types(client, api_auth_token, test_db_session):
     request = {
         "first_name": 1,
         "last_name": 2,
@@ -110,7 +114,9 @@ def test_post_eligibility_400_invalid_types(client, test_db_session):
         "zip_code": 7,
         "applicant_notes": 8,
     }
-    response = client.post("/v1/eligibility-screener", json=request)
+    response = client.post(
+        "/v1/eligibility-screener", json=request, headers={"X-Auth": api_auth_token}
+    )
 
     assert response.status_code == 400
     error_list = response.get_json()["errors"]
@@ -139,12 +145,14 @@ def test_post_eligibility_400_invalid_types(client, test_db_session):
     assert len(results) == 0
 
 
-def test_post_eligibility_400_invalid_enums(client, test_db_session):
+def test_post_eligibility_400_invalid_enums(client, api_auth_token, test_db_session):
     request = base_request | {
         "eligibility_categories": ["abcdef", "ghij"],
         "eligibility_programs": ["klmno"],
     }
-    response = client.post("/v1/eligibility-screener", json=request)
+    response = client.post(
+        "/v1/eligibility-screener", json=request, headers={"X-Auth": api_auth_token}
+    )
 
     assert response.status_code == 400
     error_list = response.get_json()["errors"]
@@ -167,3 +175,17 @@ def test_post_eligibility_400_invalid_enums(client, test_db_session):
         ]
         assert "is not one of" in message
         assert error_type == "enum"
+
+
+def test_post_eligibility_401_unauthorized_token(client, api_auth_token, test_db_session):
+    request = base_request | {}
+    response = client.post(
+        "/v1/eligibility-screener", json=request, headers={"X-Auth": "incorrect token"}
+    )
+    assert response.status_code == 401
+
+    # Verify the error message
+    assert (
+        "The server could not verify that you are authorized to access the URL requested"
+        in response.get_json()["message"]
+    )
