@@ -3,6 +3,7 @@
 # running on the production docker image from any directory.
 import itertools
 import os
+from typing import Optional
 
 import sqlalchemy
 from alembic import command, script
@@ -19,15 +20,15 @@ alembic_cfg = Config(os.path.join(os.path.dirname(__file__), "./alembic.ini"))
 alembic_cfg.set_main_option("script_location", os.path.dirname(__file__))
 
 
-def up(revision="head"):
+def up(revision: str = "head") -> None:
     command.upgrade(alembic_cfg, revision)
 
 
-def down(revision="-1"):
+def down(revision: str = "-1") -> None:
     command.downgrade(alembic_cfg, revision)
 
 
-def downall(revision="base"):
+def downall(revision: str = "base") -> None:
     command.downgrade(alembic_cfg, revision)
 
 
@@ -57,7 +58,11 @@ def have_all_migrations_run(db_engine: sqlalchemy.engine.Engine) -> None:
 def check_model_parity() -> None:
     revisions: list[MigrationScript] = []
 
-    def process_revision_directives(context, revision, directives):
+    def process_revision_directives(
+        context: migration.MigrationContext,
+        revision: Optional[str],
+        directives: list[MigrationScript],
+    ) -> None:
         nonlocal revisions
         revisions = list(directives)
         # Prevent actually generating a migration

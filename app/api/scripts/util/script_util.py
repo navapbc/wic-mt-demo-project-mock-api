@@ -2,8 +2,6 @@ from contextlib import contextmanager
 from dataclasses import dataclass
 from typing import Generator
 
-from sqlalchemy.orm import scoped_session
-
 import api.db as db
 import api.logging
 from api.util.local import load_local_env_vars
@@ -13,7 +11,7 @@ logger = api.logging.get_logger(__name__)
 
 @dataclass
 class ScriptContext:
-    db_session: scoped_session
+    db_session: db.scoped_session
 
 
 @contextmanager

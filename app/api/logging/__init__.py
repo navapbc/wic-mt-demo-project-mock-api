@@ -1,72 +1,16 @@
-import json
 import logging
 import logging.config
 import os
 import platform
 import pwd
 import sys
-from datetime import datetime
 from typing import Any, cast
 
-from . import decodelog
-
-# Attributes of LogRecord to exclude from the JSON formatted lines. An exclusion list approach is
-# used so that all "extra" attributes can be included in a line.
-EXCLUDE_ATTRIBUTES = {
-    "args",
-    "exc_info",
-    "filename",
-    "levelno",
-    "lineno",
-    "module",
-    "msecs",
-    "msg",
-    "pathname",
-    "processName",
-    "relativeCreated",
-}
+from api.logging.log_formatters import HumanReadableFormatter, JsonFormatter
 
 
-class JsonFormatter(logging.Formatter):  # noqa: B1
-    """A logging formatter which formats each line as JSON."""
-
-    def format(self, record):
-        super(JsonFormatter, self).format(record)
-
-        output = {
-            key: value
-            for key, value in record.__dict__.items()
-            if key not in EXCLUDE_ATTRIBUTES and value is not None
-        }
-
-        return json.dumps(output, separators=(",", ":"))
-
-
-class HumanReadableFormatter(logging.Formatter):
-    """A logging formatter which formats each line
-    as color-code human readable text
-    """
-
-    def format(self, record):
-        super(HumanReadableFormatter, self).format(record)
-
-        return decodelog.format_line(
-            datetime.utcfromtimestamp(record.created),
-            record.name,
-            record.funcName,
-            record.levelname,
-            record.message,
-            record.__dict__,
-        )
-
-
-def init(program_name):
-    # Determine which log formatter to use
-    # based on the environment variable specified
-    # Defaults to JSON
-    log_format = os.getenv("LOG_FORMAT", "json")
-
-    logging_config: dict = {
+def get_logging_config(log_format: str) -> dict[str, Any]:
+    return {
         "version": 1,
         "disable_existing_loggers": False,
         "root": {"handlers": ["console"], "level": "INFO"},
@@ -103,6 +47,13 @@ def init(program_name):
         },
     }
 
+
+def init(program_name: str) -> None:
+    # Determine which log formatter to use
+    # based on the environment variable specified
+    # Defaults to JSON
+    log_format = os.getenv("LOG_FORMAT", "json")
+    logging_config = get_logging_config(log_format)
     logging.config.dictConfig(logging_config)
 
     logger.info(
@@ -134,7 +85,7 @@ def init(program_name):
     logger.info("invoked as: %s", " ".join(original_argv))
 
 
-def get_logger(name):
+def get_logger(name: str) -> logging.Logger:
     """Return a logger with the specified name."""
     return logging.getLogger(name)
 

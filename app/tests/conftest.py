@@ -7,7 +7,7 @@ import boto3
 import moto
 import pytest
 import sqlalchemy
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
 import api.app as app_entry
 import api.db
@@ -104,7 +104,7 @@ def test_db_session(test_db):
     # Based on https://docs.sqlalchemy.org/en/13/orm/session_transaction.html#joining-a-session-into-an-external-transaction-such-as-for-test-suites
     connection = test_db.connect()
     trans = connection.begin()
-    session = scoped_session(
+    session = api.db.scoped_session(
         sessionmaker(bind=connection, autocommit=False, expire_on_commit=False)
     )
 

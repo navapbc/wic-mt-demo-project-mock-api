@@ -3,6 +3,7 @@ import sys
 from types import TracebackType
 from typing import Callable, Optional, Tuple
 
+import connexion
 import pydantic
 from flask import Response
 from werkzeug.exceptions import (
@@ -20,7 +21,7 @@ from api.util.response import ValidationErrorDetail, ValidationException, error_
 logger = api.logging.get_logger(__name__)
 
 
-def add_error_handlers_to_app(connexion_app):
+def add_error_handlers_to_app(connexion_app: connexion.FlaskApp) -> None:
     connexion_app.add_error_handler(ValidationException, validation_request_handler)
     connexion_app.add_error_handler(pydantic.ValidationError, handle_pydantic_validation_error)
 

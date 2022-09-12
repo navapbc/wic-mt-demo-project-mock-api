@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import Any, Generator
+from typing import Any, Generator, Optional
 
 import connexion
 
@@ -18,7 +18,7 @@ class ApiContext:
     """
 
     request_body: Any
-    current_user: User
+    current_user: Optional[User]
     db_session: db.scoped_session
 
     def get_log_extra(self) -> dict[str, Any]:
@@ -26,11 +26,11 @@ class ApiContext:
         Utility method for getting params to attach to the log as
          `logger.info("msg", extra=api_context.get_log_extra())`
         """
-        return {"user_id": self.current_user.user_id}
+        return {"user_id": self.current_user.user_id if self.current_user else None}
 
 
 @contextmanager
-def api_context_manager() -> Generator[ApiContext, None, None]:
+def api_context_manager(is_user_expected: bool = True) -> Generator[ApiContext, None, None]:
     """
     API context manager for working with
     requests and processing them to the DB.
@@ -47,6 +47,6 @@ def api_context_manager() -> Generator[ApiContext, None, None]:
 
         # Current user is attached in api_key_auth.py
         # during authentication
-        current_user = app.current_user()
+        current_user = app.current_user(is_user_expected)
 
         yield ApiContext(body, current_user, db_session)

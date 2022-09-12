@@ -5,45 +5,15 @@ from typing import Any, Generator, Optional
 
 import psycopg2
 import sqlalchemy.pool as pool
-from pydantic import Field
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 import api.logging
+from api.db.db_config import DbConfig, get_db_config
 from api.db.migrations.run import have_all_migrations_run
-from api.util.pydantic_util import PydanticBaseEnvConfig
 
 logger = api.logging.get_logger(__name__)
-
-
-class DbConfig(PydanticBaseEnvConfig):
-    host: str = Field("localhost", env="DB_HOST")
-    name: str = Field("main-db", env="POSTGRES_DB")
-    username: str = Field("local_db_user", env="POSTGRES_USER")
-    password: Optional[str] = Field(..., env="POSTGRES_PASSWORD")
-    db_schema: str = Field("public", env="DB_SCHEMA")
-    port: str = Field("5432", env="DB_PORT")
-    hide_sql_parameter_logs: bool = Field(True, env="HIDE_SQL_PARAMETER_LOGS")
-
-
-def get_db_config() -> DbConfig:
-    db_config = DbConfig()
-
-    logger.info(
-        "Constructed database configuration",
-        extra={
-            "host": db_config.host,
-            "dbname": db_config.name,
-            "username": db_config.username,
-            "password": "***" if db_config.password is not None else None,
-            "db_schema": db_config.db_schema,
-            "port": db_config.port,
-            "hide_sql_parameter_logs": db_config.hide_sql_parameter_logs,
-        },
-    )
-
-    return db_config
 
 
 def init(
@@ -86,7 +56,7 @@ def init(
     return session_factory
 
 
-def verify_ssl(connection_info):
+def verify_ssl(connection_info: Any) -> None:
     """Verify that the database connection is encrypted and log a warning if not."""
     if connection_info.ssl_in_use:
         logger.info(
@@ -110,7 +80,7 @@ def create_db_engine(config: Optional[DbConfig] = None) -> Engine:
     #
     # For more details on building connection pools, see the docs:
     # https://docs.sqlalchemy.org/en/13/core/pooling.html#constructing-a-pool
-    def get_conn():
+    def get_conn() -> Any:
         return psycopg2.connect(**get_connection_parameters(db_config))
 
     conn_pool = pool.QueuePool(get_conn, max_overflow=10, pool_size=20, timeout=3)

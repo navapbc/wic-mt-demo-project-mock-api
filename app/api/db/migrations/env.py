@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 
 import sqlalchemy
 from alembic import context
@@ -43,14 +44,16 @@ target_metadata = Base.metadata
 # ... etc.
 
 
-def include_object(object, name, type_, reflected, compare_to):
-    if type_ == "schema" and object.schema is not None:
+def include_object(
+    object: sqlalchemy.schema.SchemaItem, name: str, type_: str, reflected: bool, compare_to: Any
+) -> bool:
+    if type_ == "schema" and getattr(object, "schema", None) is not None:
         return False
     else:
         return True
 
 
-def run_migrations_offline():
+def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL
@@ -78,7 +81,7 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def run_migrations_online():
+def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine

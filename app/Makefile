@@ -10,7 +10,7 @@ APP_NAME := main-app
 # Note that you can also change the LOG_FORMAT env var to switch
 # between JSON & human readable format. This is left in place
 # in the event JSON is output from a process we don't log.
-DECODE_LOG := 2>&1 | python3 -u api/logging/decodelog.py
+DECODE_LOG := 2>&1 | python3 -u api/logging/util/decodelog.py
 
 # A few commands need adjustments if they're run in CI, specify those here
 # TODO - when CI gets hooked up, actually test this.
@@ -135,6 +135,14 @@ lint-poetry-version: ## Check poetry version
 lint-spectral:
 	docker run --rm --tty --cap-drop=ALL --network=none --read-only --volume=$(PWD):/tmp:ro \
 		stoplight/spectral:6 lint /tmp/openapi.yml --ruleset /tmp/.spectral.yaml $(SPECTRAL_POSTPROC)
+
+test-coverage:
+	$(PY_RUN_CMD) coverage run --branch --source=api -m pytest $(args)
+	$(PY_RUN_CMD) coverage report
+
+test-coverage-report: ## Open HTML test coverage report
+	$(PY_RUN_CMD) coverage html --directory .coverage_report
+	open .coverage_report/index.html
 
 ##################################################
 # Scripts

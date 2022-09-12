@@ -4,7 +4,6 @@ from datetime import datetime
 
 import factory
 import faker
-from sqlalchemy.orm import scoped_session
 
 import api.db as db
 import api.db.models.eligibility_models as eligibility_models
@@ -15,7 +14,7 @@ db_session = None
 fake = faker.Faker()
 
 
-def get_db_session():
+def get_db_session() -> db.scoped_session:
     global db_session
 
     if os.getenv("DB_FACTORIES_DISABLE_DB_ACCESS", "0") == "1":
@@ -42,7 +41,7 @@ def get_db_session():
     return db_session
 
 
-Session = scoped_session(lambda: get_db_session(), scopefunc=lambda: get_db_session())
+Session = db.scoped_session(lambda: get_db_session(), scopefunc=lambda: get_db_session())  # type: ignore
 
 
 class Generators:
