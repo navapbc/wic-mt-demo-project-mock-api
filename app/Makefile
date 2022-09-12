@@ -103,6 +103,14 @@ MIGRATE_MERGE_MSG := Merge multiple heads
 db-migrate-merge-heads: ## Create a new migration that depends on all existing `head`s
 	$(alembic_cmd) merge heads -m "$(MIGRATE_MERGE_MSG)" $(args)
 
+db-migrate-current: ## Show current revision for a database
+	$(alembic_cmd) current $(args)
+
+db-migrate-history: ## Show migration history
+	$(alembic_cmd) history $(args)
+
+db-migrate-heads: ## Show migrations marked as a head
+	$(alembic_cmd) heads $(args)
 
 ##################################################
 # Testing
