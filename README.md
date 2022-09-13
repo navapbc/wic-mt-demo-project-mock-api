@@ -1,6 +1,8 @@
 # Template Application Flask
 
-TODO - description
+Template application for a basic Flask API.
+
+This application should run as-is with minimal setup (see below).
 ## Getting started
 
 This application is dockerized. Take a look at [Dockerfile](./app/Dockerfile) to see how it works.

@@ -83,7 +83,7 @@ components:
       example: '1970-01-01'
       format: date
 
-    ExamplePerson:
+    ExamplePersonBase:
       type: object
       properties:
         first_name:
@@ -92,6 +92,7 @@ components:
           description: The persons first name
         middle_name:
           type: string
+          example: Anne
           nullable: true
           description: The persons middle name
         last_name:
@@ -108,19 +109,10 @@ components:
           type: boolean
           example: true
           description: whether or not the person is real
-        pets:
-          type: array
-          nullable: true
-          items:
-            $ref: "#/components/schemas/ExamplePet"
 
-    ExamplePet:
+    ExamplePetBase:
       type: object
       properties:
-        example_pet_id:
-          type: string
-          example: "2f0f58a0-fcad-465b-b474-ee6c961cd6e3"
-          nullable: true
         name:
           type: string
           example: Spot
@@ -133,11 +125,38 @@ components:
             - Bird
             - Fish
 
+    ExamplePetWithId:
+      type: object
+      properties:
+        example_pet_id:
+          type: string
+          example: "2f0f58a0-fcad-465b-b474-ee6c961cd6e3"
+          nullable: true
+      allOf:
+        - $ref: "#/components/schemas/ExamplePetBase"
+
+    ExamplePersonWithId:
+      type: object
+      properties:
+        pets:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ExamplePetBase"
+      allOf:
+        - $ref: "#/components/schemas/ExamplePersonBase"
+
     ExamplePersonRequest:
       type: object
+      properties:
+        pets:
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/ExamplePetBase"
       allOf:
-        - $ref: "#/components/schemas/ExamplePerson"
-    
+        - $ref: "#/components/schemas/ExamplePersonBase"
+
     ExamplePersonResponse:
       type: object
       properties:
@@ -145,8 +164,13 @@ components:
           type: string
           format: uuid
           example: "2f0f58a0-fcad-465b-b474-ee6c961cd6e3"
+        pets:
+            type: array
+            nullable: true
+            items:
+              $ref: "#/components/schemas/ExamplePetWithId"
       allOf:
-        - $ref: "#/components/schemas/ExamplePerson"
+        - $ref: "#/components/schemas/ExamplePersonWithId"
 
     SuccessfulResponse:
       type: object
