@@ -1,7 +1,6 @@
-# WIC Mock API
+# Template Application Flask
 
-This is a Mock API wrapper around the SPIRIT MIS for the Special Supplemental Nutrition Program for Women, Infants, and Children (WIC). It was developed for the State of Montana.
-
+TODO - description
 ## Getting started
 
 This application is dockerized. Take a look at [Dockerfile](./app/Dockerfile) to see how it works.

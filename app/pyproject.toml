@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "wic-mock-api"
+name = "template-application-flask"
 version = "0.1.0"
-description = "A Mock API wrapper around the SPIRIT MIS for the Special Supplemental Nutrition Program for Women, Infants, and Children (WIC)"
+description = "A template flask API for building ontop of"
 packages = [{ include = "api" }]
 authors = ["Nava Engineering <engineering@navapbc.com>"]
 
@@ -40,7 +40,7 @@ build-backend = "poetry.core.masonry.api"
 db-migrate-up = "api.db.migrations.run:up"
 db-migrate-down = "api.db.migrations.run:down"
 db-migrate-down-all = "api.db.migrations.run:downall"
-create-eligibility-screener-csv = "api.scripts.create_eligibility_screener_csv:main"
+generate-pet-csv = "api.scripts.generate_pet_csv:main"
 
 [tool.black]
 line-length = 100

@@ -7,7 +7,7 @@ This directory contains everything related to our infrastructure. We use [Terraf
 In order to run Terraform commands, users need to provide a set of valid credentials to Terraform.
 1. Install `aws-cli`.
 2. Create a named profile for the `aws-cli`. This is described more in depth in the [Amazon docs](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html), however to summarize, you will need an AWS account, an access key id, and a secret access key.
-3. This new profile should be named `wic-mt`
+3. This new profile should be named `<CONFIGURE_ME>`
 
 ### Install Terraform
 This project uses the version manager [tfenv](https://formulae.brew.sh/formula/tfenv) to install a specific version of Terraform.

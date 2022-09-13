@@ -1,4 +1,5 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
+from typing import Optional
 
 import pytz
 
@@ -28,3 +29,9 @@ def adjust_timezone(timestamp: datetime, timezone_str: str) -> datetime:
     """
     new_timezone = pytz.timezone(timezone_str)
     return timestamp.astimezone(new_timezone)
+
+
+def datetime_str_to_date(datetime_str: Optional[str]) -> Optional[date]:
+    if not datetime_str:
+        return None
+    return datetime.fromisoformat(datetime_str).date()

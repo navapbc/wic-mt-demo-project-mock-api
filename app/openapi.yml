@@ -1,12 +1,12 @@
 openapi: 3.0.3
 info:
-  title: WIC MT Demo Project Mock API
-  description: A Mock API wrapper around the SPIRIT MIS for the Special Supplemental Nutrition Program for Women, Infants, and Children (WIC)
+  title: Template Application Flask
+  description: Template API for a Flask Application
   version: "2022-06-21"
   contact:
-    name: Nava WIC MT Demo Project Team
+    name: Template Application Flask
     url: https://www.navapbc.com/
-    email: mt-wic-demo-project@navapbc.com
+    email: engineering@navapbc.com
 
 security:
   - api_key: []
@@ -17,7 +17,7 @@ servers:
     description: Development server
 
 tags:
-  - name: Eligibility
+  - name: Example
   - name: Health
     description: API Health and Integrity
 
@@ -38,18 +38,17 @@ paths:
               schema:
                 type: boolean
 
-
-  /eligibility-screener:
+  /example-person:
     post:
       security:
         - api_key: []
       tags:
-        - Eligibility
-      summary: Submit an eligibility screener
-      operationId: api.route.eligibility.eligibility_screener_post
+        - Example
+      summary: Example post endpoint for creating a simple model in the DB
+      operationId: api.route.example_person_route.example_person_post
       responses:
         "201":
-          description: Eligibility screener was successfully submitted
+          description: Example person was successfully submitted
           content:
             application/json:
               schema:
@@ -57,7 +56,7 @@ paths:
                   - $ref: '#/components/schemas/SuccessfulResponse'
                   - properties:
                       data:
-                        $ref: "#/components/schemas/EligibilityScreenerResponse"
+                        $ref: "#/components/schemas/ExamplePersonResponse"
         "400":
           description: An unsuccessful request returns a 400 status code if one or more errors occurred.
           content:
@@ -68,7 +67,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/EligibilityScreenerRequest"
+              $ref: "#/components/schemas/ExamplePersonRequest"
 
 
 components:
@@ -79,79 +78,75 @@ components:
       in: header
       x-apikeyInfoFunc: api.auth.api_key_auth.api_key_auth
   schemas:
-    EligibilityScreenerBase:
+    Date:
+      type: string
+      example: '1970-01-01'
+      format: date
+
+    ExamplePerson:
       type: object
       properties:
         first_name:
           type: string
           example: Jane
-          description: The applicants first name
+          description: The persons first name
+        middle_name:
+          type: string
+          nullable: true
+          description: The persons middle name
         last_name:
           type: string
           example: Doe
-          description: The applicants last name
+          description: The persons last name
         phone_number:
           type: string
           example: "224-705-2345"
           pattern: '^([0-9]|\*){3}\-([0-9]|\*){3}\-[0-9]{4}$'
-        eligibility_categories:
-          type: array
-          items:
-            type: string
-            enum:
-              - "pregnant"
-              - "baby"
-              - "guardian"
-              - "loss"
-          example: ["pregnant"]
-          description: The list of categories that make the applicant eligible
-        has_prior_wic_enrollment:
+        date_of_birth:
+          $ref: "#/components/schemas/Date"
+        is_real:
           type: boolean
-          example: false
-          description: Whether or not the applicant or anyone in their household has prior WIC enrollment
-        eligibility_programs:
+          example: true
+          description: whether or not the person is real
+        pets:
           type: array
+          nullable: true
           items:
-            type: string
-            enum:
-              - "insurance"
-              - "snap"
-              - "tanf"
-          example: ["insurance", "snap"]
-          description: Other programs the applicant is already enrolled in
-        household_size:
-          type: integer
-          nullable: true
-          example: 1
-          description: Household size - only necessary if no other current eligibility programs
-        zip_code:
-          type: string
-          pattern: '^[0-9]{5}((?:-[0-9]{4})?|(?:-\*{4})?)$'
-          example: "12345"
-          description: The ZIP code of the applicant
-        wic_clinic:
-          type: string
-          example: "BEAVERHEAD CPH WIC\n41 Barrett Street Dillon, MT 59725"
-          description: The full address of the chosen WIC clinic
-        applicant_notes:
-          type: string
-          nullable: true
-          example: "Example notes"
-          description: Any additional applicant notes
+            $ref: "#/components/schemas/ExamplePet"
 
-    EligibilityScreenerRequest:
-      allOf:
-        - $ref: "#/components/schemas/EligibilityScreenerBase"
-
-    EligibilityScreenerResponse:
+    ExamplePet:
       type: object
       properties:
-        eligibility_screener_id:
+        example_pet_id:
+          type: string
+          example: "2f0f58a0-fcad-465b-b474-ee6c961cd6e3"
+          nullable: true
+        name:
+          type: string
+          example: Spot
+        species:
+          type: string
+          example: Dog
+          enum:
+            - Dog
+            - Cat
+            - Bird
+            - Fish
+
+    ExamplePersonRequest:
+      type: object
+      allOf:
+        - $ref: "#/components/schemas/ExamplePerson"
+    
+    ExamplePersonResponse:
+      type: object
+      properties:
+        example_person_id:
           type: string
           format: uuid
           example: "2f0f58a0-fcad-465b-b474-ee6c961cd6e3"
       allOf:
-        - $ref: "#/components/schemas/EligibilityScreenerBase"
+        - $ref: "#/components/schemas/ExamplePerson"
 
     SuccessfulResponse:
       type: object

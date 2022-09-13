@@ -1,4 +1,5 @@
 import os
+import random
 import unittest.mock
 from datetime import datetime
 
@@ -6,7 +7,7 @@ import factory
 import faker
 
 import api.db as db
-import api.db.models.eligibility_models as eligibility_models
+import api.db.models.example_models as example_models
 import api.util.datetime_util as datetime_util
 
 db_session = None
@@ -57,19 +58,25 @@ class BaseFactory(factory.alchemy.SQLAlchemyModelFactory):
         sqlalchemy_session_persistence = "commit"
 
 
-class EligibilityScreenerFactory(BaseFactory):
+class ExamplePersonFactory(BaseFactory):
     class Meta:
-        model = eligibility_models.EligibilityScreener
+        model = example_models.ExamplePerson
 
-    eligibility_screener_id = Generators.UuidObj
+    example_person_id = Generators.UuidObj
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     phone_number = "123-456-7890"
-    eligibility_categories = ["baby"]
-    has_prior_wic_enrollment = False
-    eligibility_programs = ["tanf"]
-    household_size = None
-    zip_code = factory.Faker("postcode")
-    wic_clinic = "Example Clinic\n1234 Main Street Cityville, MT 12345"
-    applicant_notes = factory.Sequence(lambda n: f"Notes #{n}")
-    added_to_eligibility_screener_at = None
+    date_of_birth = factory.Faker("date_object")
+    is_real = factory.Faker("boolean")
+
+
+class ExamplePetFactory(BaseFactory):
+    class Meta:
+        model = example_models.ExamplePet
+
+    example_pet_id = Generators.UuidObj
+    name = factory.Faker("first_name")
+    species = random.choice(["Dog", "Cat", "Bird", "Fish"])
+
+    pet_owner = factory.SubFactory(ExamplePersonFactory)
+    pet_owner_id = factory.LazyAttribute(lambda p: p.pet_owner.example_person_id)

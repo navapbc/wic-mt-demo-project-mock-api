@@ -1,7 +1,7 @@
-# WIC Montana Mock API
+# Template Application Flask
 
 # Introduction
-This is the API layer of the WIC Montana Mock API. It includes a few separate components:
+This is the API layer of the Template Application Flask. It includes a few separate components:
 - The REST API
 - Backend & utility scripts
 
