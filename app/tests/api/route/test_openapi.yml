@@ -8,7 +8,7 @@ paths:
   /user:
     get:
       summary: Test API
-      operationId: tests.api.util.test_validators.get_user
+      operationId: tests.api.route.test_validators.get_user
       responses:
         200:
           description: greeting response
@@ -22,7 +22,7 @@ paths:
                         $ref: "#/components/schemas/User"
     post:
       summary: Test API
-      operationId: tests.api.util.test_validators.post_user
+      operationId: tests.api.route.test_validators.post_user
       responses:
         200:
           description: greeting response

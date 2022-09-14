@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import Field
 
 import api.logging
-from api.util.pydantic_util import PydanticBaseEnvConfig
+from api.util.env_config import PydanticBaseEnvConfig
 
 logger = api.logging.get_logger(__name__)
 

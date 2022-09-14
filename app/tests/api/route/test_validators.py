@@ -5,15 +5,15 @@ import connexion
 import pytest
 from pydantic import Field, ValidationError
 
-from api.util.connexion_validators import get_custom_validator_map
-from api.util.error_handlers import (
+from api.route.connexion_validators import get_custom_validator_map
+from api.route.error_handlers import (
     add_error_handlers_to_app,
     convert_pydantic_error_to_validation_exception,
     is_unexpected_validation_error,
     log_validation_error,
 )
-from api.util.pydantic_util import PydanticBaseModel
-from api.util.response import (
+from api.route.request import BaseRequestModel
+from api.route.response import (
     ValidationErrorDetail,
     ValidationException,
     error_response,
@@ -201,7 +201,7 @@ def test_validation_exceptions_logged_as_warnings_when_only_warn_is_true(caplog)
     ]
 
 
-class ExamplePydanticModel(PydanticBaseModel):
+class ExamplePydanticModel(BaseRequestModel):
     first_field: str = Field(max_length=5)
     second_field: str = Field(max_length=5)
 

@@ -6,19 +6,19 @@ from pydantic import UUID4
 
 import api.logging
 from api.db.models.example_models import ExamplePerson, ExamplePet
-from api.util.api_context import ApiContext
-from api.util.pydantic_util import PydanticBaseModel
+from api.route.api_context import ApiContext
+from api.route.request import BaseRequestModel
 
 logger = api.logging.get_logger(__name__)
 
 
-class ExamplePetParams(PydanticBaseModel):
+class ExamplePetParams(BaseRequestModel):
     example_pet_id: Optional[UUID4]
     name: str
     species: str
 
 
-class ExamplePersonParams(PydanticBaseModel):
+class ExamplePersonParams(BaseRequestModel):
     example_person_id: Optional[UUID4]
     first_name: str
     middle_name: Optional[str]

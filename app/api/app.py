@@ -9,8 +9,8 @@ from werkzeug.exceptions import Unauthorized
 import api.db as db
 import api.logging
 from api.auth.api_key_auth import User
-from api.util.connexion_validators import get_custom_validator_map
-from api.util.error_handlers import add_error_handlers_to_app
+from api.route.connexion_validators import get_custom_validator_map
+from api.route.error_handlers import add_error_handlers_to_app
 
 logger = api.logging.get_logger(__name__)
 

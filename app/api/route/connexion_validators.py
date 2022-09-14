@@ -12,7 +12,7 @@ from connexion.utils import is_null
 from flask import Request
 
 import api.logging
-from api.util.response import ValidationErrorDetail, ValidationException
+from api.route.response import ValidationErrorDetail, ValidationException
 
 logger = api.logging.get_logger(__name__)
 

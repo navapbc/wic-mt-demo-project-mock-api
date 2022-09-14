@@ -16,7 +16,7 @@ from werkzeug.exceptions import (
 )
 
 import api.logging
-from api.util.response import ValidationErrorDetail, ValidationException, error_response
+from api.route.response import ValidationErrorDetail, ValidationException, error_response
 
 logger = api.logging.get_logger(__name__)
 

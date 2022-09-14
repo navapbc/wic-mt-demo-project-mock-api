@@ -1,6 +1,6 @@
 import os
 
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseSettings
 
 import api
 
@@ -9,11 +9,6 @@ env_file = os.path.join(
     "config",
     "%s.env" % os.getenv("ENVIRONMENT", "local"),
 )
-
-
-class PydanticBaseModel(BaseModel):
-    class Config:
-        orm_mode = True
 
 
 class PydanticBaseEnvConfig(BaseSettings):

@@ -2,8 +2,8 @@ import flask
 
 import api.logging as logging
 import api.route.handler.example_person_handler as example_person_handler
-import api.util.response as response_util
-from api.util.api_context import api_context_manager
+import api.route.response as response_util
+from api.route.api_context import api_context_manager
 
 logger = logging.get_logger(__name__)
 

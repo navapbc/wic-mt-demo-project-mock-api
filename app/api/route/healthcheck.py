@@ -3,8 +3,8 @@ from sqlalchemy import text
 from werkzeug.exceptions import ServiceUnavailable
 
 import api.logging
-import api.util.response as response_util
-from api.util.api_context import api_context_manager
+import api.route.response as response_util
+from api.route.api_context import api_context_manager
 
 logger = api.logging.get_logger(__name__)
 

@@ -1,4 +1,4 @@
-from api.util.pydantic_util import PydanticBaseEnvConfig
+from api.util.env_config import PydanticBaseEnvConfig
 
 
 class AppConfig(PydanticBaseEnvConfig):

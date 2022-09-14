@@ -1,7 +1,7 @@
 import pytest
 from flask import g
 
-from api.util.api_context import api_context_manager
+from api.route.api_context import api_context_manager
 
 
 def test_get_api_context(app, test_db_session):
