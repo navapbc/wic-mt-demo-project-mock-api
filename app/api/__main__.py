@@ -13,7 +13,7 @@ from api.util.local import load_local_env_vars
 logger = api.logging.get_logger(__package__)
 
 
-def main():
+def main() -> None:
     load_local_env_vars()
     app_config = AppConfig()
 

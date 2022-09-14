@@ -3,6 +3,10 @@ info:
   title: WIC MT Demo Project Mock API
   description: A Mock API wrapper around the SPIRIT MIS for the Special Supplemental Nutrition Program for Women, Infants, and Children (WIC)
   version: "2022-06-21"
+  contact:
+    name: Nava WIC MT Demo Project Team
+    url: https://www.navapbc.com/
+    email: mt-wic-demo-project@navapbc.com
 
 security:
   - api_key: []
@@ -12,6 +16,11 @@ servers:
   - url: /v1
     description: Development server
 
+tags:
+  - name: Eligibility
+  - name: Health
+    description: API Health and Integrity
+
 paths:
   /healthcheck:
     get:
@@ -20,7 +29,7 @@ paths:
       tags:
         - Health
       summary: Healthcheck for the API
-      operationId: api.api.healthcheck_get
+      operationId: api.route.healthcheck.healthcheck_get
       responses:
         "200":
           description: Success
@@ -37,7 +46,7 @@ paths:
       tags:
         - Eligibility
       summary: Submit an eligibility screener
-      operationId: api.eligibility.eligibility_screener_post
+      operationId: api.route.eligibility.eligibility_screener_post
       responses:
         "201":
           description: Eligibility screener was successfully submitted

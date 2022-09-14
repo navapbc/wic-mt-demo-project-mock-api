@@ -1,4 +1,4 @@
-from typing import Optional, Type
+from typing import Any, Generator, Optional, Type
 
 import jsonschema
 from connexion.decorators.response import ResponseValidator
@@ -33,7 +33,9 @@ def extend_with_set_default(
 ) -> dict[Type[jsonschema.Validator], dict]:
     validate_properties = validator_class.VALIDATORS["properties"]
 
-    def set_defaults(validator, properties, instance, schema):
+    def set_defaults(
+        validator: jsonschema.Validator, properties: dict, instance: Any, schema: dict
+    ) -> Generator[Exception, None, None]:
         for property, subschema in properties.items():
             if "default" in subschema:
                 instance.setdefault(property, subschema["default"])
@@ -81,7 +83,7 @@ def validate_schema_util(
 
 
 class CustomRequestBodyValidator(RequestBodyValidator):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super(CustomRequestBodyValidator, self).__init__(
             *args, validator=DefaultsEnforcingDraft4RequestValidator, **kwargs
         )
@@ -101,7 +103,7 @@ class CustomRequestBodyValidator(RequestBodyValidator):
 
 
 class CustomResponseBodyValidator(ResponseBodyValidator):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super(CustomResponseBodyValidator, self).__init__(
             *args, validator=DefaultsEnforcingDraft4ResponseValidator, **kwargs
         )
@@ -139,7 +141,7 @@ class CustomResponseValidator(ResponseValidator):
 
 
 class CustomParameterValidator(ParameterValidator):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super(CustomParameterValidator, self).__init__(*args, **kwargs)
 
     def validate_formdata_parameter_list(self, request: Request) -> Optional[set]:

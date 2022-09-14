@@ -21,22 +21,29 @@ class User:
     sub_id: str
     username: str
 
-    def as_dict(self):
+    def as_dict(self) -> dict[str, Any]:
         # Connexion expects a dictionary it can
         # use .get() on, so convert this to that format
         return {"uid": self.user_id, "sub": self.sub_id}
+
+    def get_user_log_attributes(self) -> dict:
+        # Note this gets called during authentication
+        # to attach the information to the flask global object
+        # which will in turn be attached to the log record
+        return {"current_user.user_id": str(self.user_id)}
 
 
 API_AUTH_USER = User(uuid.uuid4(), "sub_id_1234", "API auth user")
 
 
-def api_key_auth(token: str, required_scopes: Any) -> User:
+def api_key_auth(token: str, required_scopes: Any) -> dict:
     logger.info("Authenticating provided token")
 
     user = process_token(token)
     flask.g.current_user = user
+    flask.g.current_user_log_attributes = user.get_user_log_attributes()
 
-    logger.info("Authentication successful", extra={"user_id": user.user_id})
+    logger.info("Authentication successful")
 
     return user.as_dict()
 

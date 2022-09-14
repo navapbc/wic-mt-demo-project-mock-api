@@ -4,7 +4,6 @@ from typing import Generator, Optional
 
 import connexion
 from flask import g
-from sqlalchemy.orm import scoped_session
 from werkzeug.exceptions import Unauthorized
 
 import api.db as db
@@ -18,7 +17,7 @@ logger = api.logging.get_logger(__name__)
 
 def create_app(
     check_migrations_current: bool = True,
-    db_session_factory: Optional[scoped_session] = None,
+    db_session_factory: Optional[db.scoped_session] = None,
     do_close_db: bool = True,
 ) -> connexion.FlaskApp:
 
@@ -38,14 +37,14 @@ def create_app(
     )
 
     @app.app.before_request
-    def push_db():
+    def push_db() -> None:
         # Attach the DB session factory
         # to the global Flask context
         g.db = db_session_factory
         g.connexion_flask_app = app
 
     @app.app.teardown_request
-    def close_db(exception=None):
+    def close_db(exception: Optional[Exception] = None) -> None:
         if not do_close_db:
             logger.debug("Not closing DB session")
             return
@@ -63,9 +62,9 @@ def create_app(
     return app
 
 
-def db_session_raw() -> scoped_session:
+def db_session_raw() -> db.scoped_session:
     """Get a plain SQLAlchemy Session."""
-    session: scoped_session = g.get("db")
+    session: db.scoped_session = g.get("db")
     if session is None:
         raise Exception("No database session available in application context")
 
@@ -73,7 +72,7 @@ def db_session_raw() -> scoped_session:
 
 
 @contextmanager
-def db_session(close: bool = False) -> Generator[scoped_session, None, None]:
+def db_session(close: bool = False) -> Generator[db.scoped_session, None, None]:
     """Get a SQLAlchemy Session wrapped in some transactional management.
 
     This commits session when done, rolls back transaction on exceptions,
@@ -86,9 +85,9 @@ def db_session(close: bool = False) -> Generator[scoped_session, None, None]:
         yield session_scoped
 
 
-def current_user() -> User:
+def current_user(is_user_expected: bool = True) -> Optional[User]:
     current = g.get("current_user")
-    if current is None:
+    if is_user_expected and current is None:
         logger.error("No current user found for request")
         raise Unauthorized
     return current

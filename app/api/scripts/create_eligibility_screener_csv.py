@@ -3,8 +3,8 @@ import os
 from dataclasses import asdict, dataclass
 
 from smart_open import open as smart_open
-from sqlalchemy.orm import scoped_session
 
+import api.db as db
 import api.logging
 from api.db.models.eligibility_models import EligibilityScreener
 from api.scripts.util.script_util import script_context_manager
@@ -46,7 +46,7 @@ ELIGIBILITY_SCREENER_CSV_HEADER = EligiblityScreenerCsvRecord(
 )
 
 
-def create_eligibility_screener_csv(db_session: scoped_session, output_file_path: str) -> None:
+def create_eligibility_screener_csv(db_session: db.scoped_session, output_file_path: str) -> None:
     # Get DB records
     eligibility_screener_records = get_eligibility_screener_records(db_session)
 
@@ -62,7 +62,7 @@ def create_eligibility_screener_csv(db_session: scoped_session, output_file_path
     db_session.commit()
 
 
-def get_eligibility_screener_records(db_session: scoped_session) -> list[EligibilityScreener]:
+def get_eligibility_screener_records(db_session: db.scoped_session) -> list[EligibilityScreener]:
     logger.info("Fetching Eligibility Screener records from DB")
     eligibility_screener_records = (
         db_session.query(EligibilityScreener)

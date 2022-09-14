@@ -43,7 +43,7 @@ class Response:
         return flask.make_response(flask.jsonify(self.to_dict()), self.status_code)
 
 
-def exclude_none(obj):
+def exclude_none(obj: Any) -> Any:
     if not isinstance(obj, dict):
         return obj
     clean = {}

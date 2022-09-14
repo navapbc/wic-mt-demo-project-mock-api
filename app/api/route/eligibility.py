@@ -1,7 +1,7 @@
 import flask
 
-import api.handler.eligibility_handler as eligibility_handler
 import api.logging as logging
+import api.route.handler.eligibility_handler as eligibility_handler
 import api.util.response as response_util
 from api.util.api_context import api_context_manager
 

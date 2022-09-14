@@ -1,7 +1,12 @@
 import logging  # noqa: B1
 
-import api.db
-from api.db import DbConfig, get_connection_parameters, get_db_config, make_connection_uri
+from api.db import (
+    DbConfig,
+    get_connection_parameters,
+    get_db_config,
+    make_connection_uri,
+    verify_ssl,
+)
 
 
 class DummyConnectionInfo:
@@ -18,7 +23,7 @@ def test_verify_ssl(caplog):
     caplog.set_level(logging.INFO)  # noqa: B1
 
     conn_info = DummyConnectionInfo(True, {"protocol": "ABCv3", "key_bits": "64", "cipher": "XYZ"})
-    api.db.verify_ssl(conn_info)
+    verify_ssl(conn_info)
 
     assert caplog.messages == [
         "database connection is using SSL: protocol ABCv3, key_bits 64, cipher XYZ"
@@ -30,7 +35,7 @@ def test_verify_ssl_not_in_use(caplog):
     caplog.set_level(logging.INFO)  # noqa: B1
 
     conn_info = DummyConnectionInfo(False, {})
-    api.db.verify_ssl(conn_info)
+    verify_ssl(conn_info)
 
     assert caplog.messages == ["database connection is not using SSL"]
     assert caplog.records[0].levelname == "WARNING"
