@@ -2,7 +2,7 @@ from datetime import date
 
 import faker
 
-from api.db.models.example_models import ExamplePerson
+from api.db.models.example_person_models import ExamplePerson
 
 fake = faker.Faker()
 

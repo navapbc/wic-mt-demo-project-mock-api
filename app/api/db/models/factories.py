@@ -7,7 +7,7 @@ import factory
 import faker
 
 import api.db as db
-import api.db.models.example_models as example_models
+import api.db.models.example_person_models as example_person_models
 import api.util.datetime_util as datetime_util
 
 db_session = None
@@ -60,7 +60,7 @@ class BaseFactory(factory.alchemy.SQLAlchemyModelFactory):
 
 class ExamplePersonFactory(BaseFactory):
     class Meta:
-        model = example_models.ExamplePerson
+        model = example_person_models.ExamplePerson
 
     example_person_id = Generators.UuidObj
     first_name = factory.Faker("first_name")
@@ -72,7 +72,7 @@ class ExamplePersonFactory(BaseFactory):
 
 class ExamplePetFactory(BaseFactory):
     class Meta:
-        model = example_models.ExamplePet
+        model = example_person_models.ExamplePet
 
     example_pet_id = Generators.UuidObj
     name = factory.Faker("first_name")

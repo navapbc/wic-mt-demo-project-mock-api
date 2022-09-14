@@ -5,7 +5,7 @@ from uuid import uuid4
 from pydantic import UUID4
 
 import api.logging
-from api.db.models.example_models import ExamplePerson, ExamplePet
+from api.db.models.example_person_models import ExamplePerson, ExamplePet
 from api.route.api_context import ApiContext
 from api.route.request import BaseRequestModel
 

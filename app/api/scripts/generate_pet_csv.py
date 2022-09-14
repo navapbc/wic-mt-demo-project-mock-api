@@ -6,7 +6,7 @@ from smart_open import open as smart_open
 
 import api.db as db
 import api.logging
-from api.db.models.example_models import ExamplePet
+from api.db.models.example_person_models import ExamplePet
 from api.scripts.util.script_util import script_context_manager
 from api.util.datetime_util import utcnow
 

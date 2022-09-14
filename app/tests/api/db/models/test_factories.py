@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from api.db.models.example_models import ExamplePet
+from api.db.models.example_person_models import ExamplePet
 from api.db.models.factories import ExamplePersonFactory, ExamplePetFactory
 
 pet_params = {"name": "Spot", "species": "Dog"}
