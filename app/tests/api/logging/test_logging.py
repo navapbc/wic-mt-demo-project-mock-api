@@ -141,7 +141,7 @@ def test_log_message_during_request(app, test_db_session):
         g.db = test_db_session
         g.current_user_request_attributes = {"current_user.user_id": "abc123"}
 
-        logger.info("this is a log message", extra={"key3": "value3", "pii_key": "123456789"})
+        logger.info("this is a log message", extra={"key3": "value3"})
 
         log_record = json.loads(handler.formatted_records[-1])
         assert log_record["funcName"] == "test_log_message_during_request"
@@ -150,4 +150,3 @@ def test_log_message_during_request(app, test_db_session):
         assert log_record["request.method"] == "GET"
         assert log_record["request.path"] == "/fake-endpoint"
         assert log_record["key3"] == "value3"
-        assert log_record["pii_key"] == "*********"

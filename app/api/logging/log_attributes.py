@@ -1,7 +1,5 @@
 import flask
 
-import api.util.string_utils as string_utils
-
 
 def get_logging_context_attributes() -> dict:
     """
@@ -20,13 +18,11 @@ def get_request_attributes() -> dict:
         request = flask.request
 
         # Request attributes
-        request_attributes["request.method"] = string_utils.mask_pii(request.method)
-        request_attributes["request.path"] = string_utils.mask_pii(request.path)
-        request_attributes["request.url_rule"] = string_utils.mask_pii(request.url_rule)
+        request_attributes["request.method"] = request.method
+        request_attributes["request.path"] = request.path
+        request_attributes["request.url_rule"] = str(request.url_rule)
 
-        request_attributes["request_id"] = string_utils.mask_pii(
-            request.headers.get("x-amzn-requestid", "")
-        )
+        request_attributes["request_id"] = request.headers.get("x-amzn-requestid", "")
 
         user_attributes = flask.g.get("current_user_log_attributes")
         if user_attributes:
