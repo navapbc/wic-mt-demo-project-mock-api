@@ -125,7 +125,7 @@ def test_log_message_with_exception():
         assert error_log_record["funcName"] == "test_log_message_with_exception"
         assert error_log_record["threadName"] == "MainThread"
         assert error_log_record["exc_text"].startswith("Traceback (most recent call last)")
-        assert 'raise Exception("example exception")' in error_log_record["exc_text"]
+        assert 'Exception("example exception")' in error_log_record["exc_text"]
         assert error_log_record["exc_text"].endswith("Exception: example exception")
         assert error_log_record["key1"] == "value1"
         assert error_log_record["key2"] == "value2"

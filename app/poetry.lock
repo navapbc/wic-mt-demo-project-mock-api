@@ -210,7 +210,7 @@ test = ["pytest (>=6.2.0)", "pytest-benchmark", "pytest-cov", "pytest-subtests",
 name = "factory-boy"
 version = "3.2.1"
 description = "A versatile test fixtures replacement based on thoughtbot's factory_bot for Ruby."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -225,7 +225,7 @@ dev = ["zest.releaser", "tox", "wheel (>=0.32.0)", "mongoengine", "sqlalchemy", 
 name = "faker"
 version = "14.2.0"
 description = "Faker is a Python package that generates fake data for you."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.6"
 
@@ -418,7 +418,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "moto"
-version = "4.0.2"
+version = "4.0.3"
 description = "A library that allows your python tests to easily mock out the boto library"
 category = "dev"
 optional = false
@@ -859,7 +859,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "5e94f4df6090616ceb9c9b8e01cd06e8df5e614a3a2e55c951bbd3c76c49ac5d"
+content-hash = "f860e14b1e7105be2c110d74c11b2170210c7a4ca226f27d24be30f339b6cfbb"
 
 [metadata.files]
 alembic = []
@@ -1089,8 +1089,8 @@ mccabe = [
     {file = "mccabe-0.7.0.tar.gz", hash = "sha256:348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325"},
 ]
 moto = [
-    {file = "moto-4.0.2-py3-none-any.whl", hash = "sha256:befb70c7364e141ef122e9e85f8b2304946ee3a457aeeb2424f80db5409745a1"},
-    {file = "moto-4.0.2.tar.gz", hash = "sha256:231836b76ceb1786f4e91dae77e9d34e037380764edd9fd55dffa42781c8e4e7"},
+    {file = "moto-4.0.3-py3-none-any.whl", hash = "sha256:749f98f52110faa124258113c7b1980edc1551d073c0a425fe46d2480f088bf6"},
+    {file = "moto-4.0.3.tar.gz", hash = "sha256:8aeb56757e686af3e4a63f90afbc973cb231adaad87c5ce89e68936c109b0be9"},
 ]
 mypy = [
     {file = "mypy-0.971-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:f2899a3cbd394da157194f913a931edfd4be5f274a88041c9dc2d9cdcb1c315c"},
