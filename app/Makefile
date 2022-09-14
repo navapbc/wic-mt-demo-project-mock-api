@@ -10,7 +10,7 @@ APP_NAME := main-app
 # Note that you can also change the LOG_FORMAT env var to switch
 # between JSON & human readable format. This is left in place
 # in the event JSON is output from a process we don't log.
-DECODE_LOG := 2>&1 | python3 -u api/logging/util/decodelog.py
+DECODE_LOG := 2>&1 | python3 -u api/logging/decodelog.py
 
 # A few commands need adjustments if they're run in CI, specify those here
 # TODO - when CI gets hooked up, actually test this.

@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 
 import api.logging.decodelog as decodelog
-import api.util.string_utils as string_utils
 from api.logging.log_attributes import get_logging_context_attributes
 
 # Attributes of LogRecord to exclude from the JSON formatted lines. An exclusion list approach is
@@ -30,7 +29,7 @@ class JsonFormatter(logging.Formatter):
         super(JsonFormatter, self).format(record)
 
         output = {
-            key: string_utils.mask_pii_for_key(key, value)
+            key: value
             for key, value in record.__dict__.items()
             if key not in EXCLUDE_ATTRIBUTES and value is not None
         }
