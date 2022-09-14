@@ -1,7 +1,9 @@
 import csv
+import os
 from datetime import datetime, timezone
 
 import pytest
+from smart_open import open as smart_open
 
 from api.db.models.factories import EligibilityScreenerFactory
 from api.scripts.create_eligibility_screener_csv import (
@@ -13,6 +15,7 @@ from api.scripts.create_eligibility_screener_csv import (
     get_eligibility_screener_records,
 )
 from api.util.datetime_util import utcnow
+from api.util.file_util import list_files
 from api.util.string_utils import blank_for_null, join_list
 
 
@@ -22,7 +25,7 @@ def tmp_file_path(tmp_path):
 
 
 def read_csv_records(file_path):
-    with open(file_path) as csv_file:
+    with smart_open(file_path) as csv_file:
         csv_reader = csv.DictReader(csv_file)
         csv_rows = list(csv_reader)
         return csv_rows
@@ -67,9 +70,10 @@ def validate_csv_records(db_records, csv_records, test_db_session):
         assert db_record.added_to_eligibility_screener_at > db_record.created_at
 
 
-def test_create_eligibility_screener_csv(
-    test_db_session, initialize_factories_session, tmp_file_path
+def test_create_eligibility_screener_csv_s3(
+    test_db_session, initialize_factories_session, mock_s3_bucket
 ):
+    s3_filepath = f"s3://{mock_s3_bucket}/path/to/test.csv"
     db_records = []
     # To make validating these easier in the CSV, make the first names consistent
     db_records.append(
@@ -97,20 +101,39 @@ def test_create_eligibility_screener_csv(
         )
     )
 
-    create_eligibility_screener_csv(test_db_session, tmp_file_path)
-    csv_rows = read_csv_records(tmp_file_path)
+    create_eligibility_screener_csv(test_db_session, s3_filepath)
+    csv_rows = read_csv_records(s3_filepath)
     validate_csv_records(db_records, csv_rows, test_db_session)
 
     # If we run it again, just a blank file should be made
-    create_eligibility_screener_csv(test_db_session, tmp_file_path)
-    csv_rows = read_csv_records(tmp_file_path)
+    create_eligibility_screener_csv(test_db_session, s3_filepath)
+    csv_rows = read_csv_records(s3_filepath)
     assert len(csv_rows) == 0
 
     # If we add another DB record and run it, it'll go in the file
     later_db_records = [EligibilityScreenerFactory.create()]
-    create_eligibility_screener_csv(test_db_session, tmp_file_path)
-    later_csv_rows = read_csv_records(tmp_file_path)
+    create_eligibility_screener_csv(test_db_session, s3_filepath)
+    later_csv_rows = read_csv_records(s3_filepath)
     validate_csv_records(later_db_records, later_csv_rows, test_db_session)
+
+    assert "test.csv" in list_files(f"s3://{mock_s3_bucket}/path/to/")
+
+
+def test_create_eligibility_screener_csv_local(
+    test_db_session, initialize_factories_session, tmp_path, tmp_file_path
+):
+    # Same as above test, but verifying the file
+    # logic works locally in addition to S3.
+    db_records = [
+        EligibilityScreenerFactory.create(first_name="A"),
+        EligibilityScreenerFactory.create(first_name="B"),
+        EligibilityScreenerFactory.create(first_name="C"),
+    ]
+    create_eligibility_screener_csv(test_db_session, tmp_file_path)
+    csv_rows = read_csv_records(tmp_file_path)
+    validate_csv_records(db_records, csv_rows, test_db_session)
+
+    assert os.path.exists(tmp_file_path)
 
 
 def test_get_eligibility_screener_records(test_db_session, initialize_factories_session):
