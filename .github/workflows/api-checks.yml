@@ -6,9 +6,14 @@ on:
       - main
     paths:
       - app/**
+      - .github/workflows/api-checks.yml
   pull_request:
     paths:
       - app/**
+      - .github/workflows/api-checks.yml
+
+env:
+  CI: true
 
 # this workflow should be updated/merged when WMDP-123. etc are merged
 jobs:
