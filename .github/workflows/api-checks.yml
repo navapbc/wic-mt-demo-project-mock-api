@@ -6,7 +6,7 @@ on:
       - main
     paths:
       - app/**
-   pull_request:
+  pull_request:
     paths:
       - app/**
 
