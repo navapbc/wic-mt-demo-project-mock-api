@@ -25,9 +25,9 @@ For this project specifically:
   `test_foo.py`.
 - Test cases should begin with the `test_` prefix, followed by the function it's
   testing and some description of what about the function it is testing.
-  - In `tests/api/test_example.py`, the `test_example_patch_404` function is a test
-    (because it begins with `test_`), that covers the `users_patch` function's
-    behavior around 404 responses.
+  - In `tests/api/route/test_eligibility.py`, the `test_post_eligibility_201` function is a test
+    (because it begins with `test_`), that covers the `eligibility_screener_post` function's
+    behavior around 201 responses.
   - Tests can be grouped in classes starting with `Test`, methods that start
     with `test_` will be picked up as tests, for example
     `TestFeature::test_scenario`.
@@ -48,7 +48,7 @@ They should never be imported directly.
 The main `tests/conftest.py` holds widely useful fixtures included for all
 tests. Scoped `conftest.py` files can be created that apply only to the tests
 below them in the directory hierarchy, for example, the `tests/db/conftest.py`
-file is only loaded for tests under `tests/db/`.
+file would only be loaded for tests under `tests/db/`.
 
 [More info](https://docs.pytest.org/en/latest/how-to/fixtures.html?highlight=conftest#scope-sharing-fixtures-across-classes-modules-packages-or-session)
 
@@ -84,7 +84,7 @@ model and doesn't actually perform any database interactions.
 In order to use the create strategy, pull in the `initialize_factories_session`
 fixture.
 
-Regardless of the strategy, can override the values for attributes on the
+Regardless of the strategy, you can override the values for attributes on the
 generated models by passing them into the factory call, for example:
 
 ```python
@@ -93,20 +93,3 @@ FooFactory.build(foo_id=5, name="Bar")
 
 would set `foo_id=5` and `name="Bar"` on the generated model, while all other
 attributes would use what's configured on the factory class.
-
-For creating a collection of generated models, there are batch methods,
-`build_batch()` and `create_batch()`, which will create multiple instances. For
-example:
-
-```python
-FooFactory.build_batch(size=5)
-```
-
-will return 5 `Foo` instances with different data. Attributes set in the batch
-call will be shared among all the instances, so:
-
-```python
-FooFactory.build_batch(size=2, parent_widget=widget)
-```
-
-would create 2 `Foo` instances with `widget` set as their `parent_widget`.

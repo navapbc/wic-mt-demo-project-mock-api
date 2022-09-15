@@ -67,24 +67,5 @@ function that is run to do the authentication.
 ## Authorization
 n/a - Specific user authorization is not yet implemented for this API.
 
-## Running In Hosted Environments
-
-Application code gets run as tasks on [AWS Elastic Container Service (ECS)
-clusters][ecs-docs], backed by [AWS Fargate][fargate-docs]
-
-[ecs-docs]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/Welcome.html
-[fargate-docs]: https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AWS_Fargate.html
-
-### ECS
-
-ECS tasks all share the same container as built by the `app` stage of the
-`Dockerfile`. This stage builds the project Python package (basically zip up
-[app/](/app/)) and installs it into the container environment.
-
-This also has the effect of making the package entrypoints as listed in the
-`[tool.poetry.scripts]` section of [pyproject.toml](/app/pyproject.toml)
-available on `PATH`, so ECS tasks besides the Paid Leave API server tend to set
-one of these as their Docker command.
-
 ### Database diagram
 n/a - Database diagrams are not yet available for this application.

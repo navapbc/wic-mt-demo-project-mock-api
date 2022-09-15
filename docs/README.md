@@ -5,38 +5,32 @@ This is the API layer of the Template Application Flask. It includes a few separ
 - The REST API
 - Backend & utility scripts
 
-## API Directory Structure
+## Project Directory Structure
 ```
-.
-├── api
-│   └── auth                Authentication code for API
-│   └── db
-│       └── models          DB model definitions            
-│       └── migrations      DB migration configs
-│           └── versions    The DB migrations
-│   └── logging
-│   └── route               API route definitions
-│       └── handler         API route implementations
-│   └── scripts             Backend scripts that run separate from the application
-│   └── util                Utility methods and classes useful to most areas of the code
+root
+├── app
+│   └── api
+│       └── auth                Authentication code for API
+│       └── db
+│           └── models          DB model definitions            
+│           └── migrations      DB migration configs
+│               └── versions    The DB migrations
+│       └── logging
+│       └── route               API route definitions
+│           └── handler         API route implementations
+│       └── scripts             Backend scripts that run separate from the application
+│       └── util                Utility methods and classes useful to most areas of the code
 │
-├── tests
-├── Dockerfile          Multi-stage Docker build file for project
-├── docker-compose.yml  Config file for docker-compose tool, used for local development
-├── local.env           Environment variable configuration for local files
-├── openapi.yml         API specification
-├── pyproject.toml      Python project configuration file
-└── setup.cfg           Python config for tools that don't support pyproject.toml yet
+│   └── tests
+│   └── local.env           Environment variable configuration for local files
+│   └── Makefile            Frequently used CLI commands for docker and utilities
+│   └── openapi.yml         API specification
+│   └── pyproject.toml      Python project configuration file
+│   └── setup.cfg           Python config for tools that don't support pyproject.toml yet
+│   └── Dockerfile          Docker build file for project
+│
+└── docker-compose.yml  Config file for docker-compose tool, used for local development
 ```
-
-# Getting started
-
-1. In your terminal, `cd` to this repo.
-2. Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed & running.
-3. Run `make init start` to build the image and start the container.
-4. Navigate to `localhost:8080/v1/docs` to access the Swagger UI.
-5. Run `make run-logs` to see the logs of the running API container
-6. Run `docker-compose down` when you are done to delete the container.
 
 # Information
 
@@ -45,7 +39,7 @@ This is the API layer of the Template Application Flask. It includes a few separ
 * [Formatting and Linting](/docs/app/formatting-and-linting.md)
 * [Writing Tests](/docs/app/writing-tests.md)
 
-## Additional Useful Commands
+## Some Useful Commands
 `make test` will run all of the tests. Additional arguments can be passed to this command which will be passed to pytest like so: `make test args="tests/api/route -v"` which would run all tests in the route folder with verbosity increased. See the [Pytest Docs](https://docs.pytest.org/en/7.1.x/reference/reference.html#command-line-flags) for more details on CLI flags you can set.
 
 `make clean-volumes` will spin down the docker containers + delete the volumes. This can be useful to reset your DB, or fix any bad states your local environment may have gotten into.
