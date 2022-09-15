@@ -35,7 +35,7 @@ jobs:
       - name: Run Linting
         run: make lint
   security:
-    runs-on: ubutntu-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 

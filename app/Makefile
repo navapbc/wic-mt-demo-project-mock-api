@@ -29,9 +29,9 @@ endif
 # You can set this by either running `export PY_RUN_APPROACH=docker` in your shell or add
 # it to your ~/.zshrc file (and run `source ~/.zshrc`)
 ifeq "$(PY_RUN_APPROACH)" "docker"
-PY_RUN_CMD := docker-compose run $(DOCKER_EXEC_ARGS) --rm $(APP_NAME) poetry run
-else
 PY_RUN_CMD := poetry run
+else
+PY_RUN_CMD := docker-compose run $(DOCKER_EXEC_ARGS) --rm $(APP_NAME) poetry run
 endif
 
 ##################################################
