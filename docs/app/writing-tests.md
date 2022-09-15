@@ -25,8 +25,8 @@ For this project specifically:
   `test_foo.py`.
 - Test cases should begin with the `test_` prefix, followed by the function it's
   testing and some description of what about the function it is testing.
-  - In `tests/api/route/test_eligibility.py`, the `test_post_eligibility_201` function is a test
-    (because it begins with `test_`), that covers the `eligibility_screener_post` function's
+  - In `tests/api/route/test_healthcheck.py`, the `test_get_healthcheck_200` function is a test
+    (because it begins with `test_`), that covers the `healthcheck_get` function's
     behavior around 201 responses.
   - Tests can be grouped in classes starting with `Test`, methods that start
     with `test_` will be picked up as tests, for example

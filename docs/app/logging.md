@@ -11,23 +11,20 @@ We have two separate ways of formatting the logs which are controlled by the `LO
 `json` (default) -> Produces JSON formatted logs which are machine-readable.
 ```json
 {
-    "name":"api.route.eligibility",
+    "name":"api.route.healthcheck",
     "levelname":"INFO",
-    "funcName":"eligibility_screener_post",
-    "created":"1663187165.382641",
+    "funcName":"healthcheck_get",
+    "created":"1663261542.0465896",
     "thread":"275144058624",
     "threadName":"Thread-2 (process_request_thread)",
-    "process":"36",
-    "user_id":"69d08484-9693-44cb-bccc-9eb887aff975",
-    "eligibility_screener_id":"c3b86cda-7621-4606-a983-bebd99e7252b",
-    "message":"Successfully submitted eligibility screener",
-    "request.method":"POST",
-    "request.path":"/v1/eligibility-screener",
-    "request.url_rule":"/v1/eligibility-screener",
-    "request_id":"",
-    "current_user.user_id":"69d08484-9693-44cb-bccc-9eb887aff975"
+    "process":"16",
+    "message":"GET /v1/healthcheck",
+    "request.method":"GET",
+    "request.path":"/v1/healthcheck",
+    "request.url_rule":"/v1/healthcheck",
+    "request_id":""
 }
 ```
 
 `human-readable` -> Produces log messages with color formatting that are easier to parse.
-![Human readable formatting](/docs/app/images/human-readable-logs.png)
+TODO - add image once the new example endpoint is created.
