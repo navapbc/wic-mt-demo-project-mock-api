@@ -17,7 +17,7 @@ needing to work with the migrations directly, some common commands:
 make db-upgrade       # Apply pending migrations to db
 make db-downgrade     # Rollback last migration to db
 make db-downgrade-all # Rollback all migrations
-
+```
 
 ## Creating new migrations
 
@@ -88,6 +88,8 @@ make db-migrate-merge-heads
 Which will create a new migration pointing to all current "head"s, effectively
 pulling them all together.
 
-When branched migrations do need to happen in a defined order, then manually
-update the `down_revision` of one that should happen second to reference to the
-migration that should happen first.
+Or, if you wish to avoid creating extra migrations, you can manually adjust
+the `down_revision` of one of the migrations to point to the other one. This
+is also the necessary approach if the migrations need to happen in a defined
+order.
+

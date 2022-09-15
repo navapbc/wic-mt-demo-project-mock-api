@@ -24,14 +24,14 @@ else
  FLAKE8_FORMAT := default
 endif
 
-# By default, all python/poetry commands will run outside of the docker container
-# if you wish to run this differently, add PY_RUN_APPROACH=docker to your environment vars
-# You can set this by either running `export PY_RUN_APPROACH=docker` in your shell or add
+# By default, all python/poetry commands will run inside of the docker container
+# if you wish to run this natively, add PY_RUN_APPROACH=local to your environment vars
+# You can set this by either running `export PY_RUN_APPROACH=local` in your shell or add
 # it to your ~/.zshrc file (and run `source ~/.zshrc`)
-ifeq "$(PY_RUN_APPROACH)" "docker"
-PY_RUN_CMD := docker-compose run $(DOCKER_EXEC_ARGS) --rm $(APP_NAME) poetry run
-else
+ifeq "$(PY_RUN_APPROACH)" "local"
 PY_RUN_CMD := poetry run
+else
+PY_RUN_CMD := docker-compose run $(DOCKER_EXEC_ARGS) --rm $(APP_NAME) poetry run
 endif
 
 ##################################################

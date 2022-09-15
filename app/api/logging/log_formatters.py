@@ -29,7 +29,7 @@ class JsonFormatter(logging.Formatter):
         super(JsonFormatter, self).format(record)
 
         output = {
-            key: value
+            key: str(value)
             for key, value in record.__dict__.items()
             if key not in EXCLUDE_ATTRIBUTES and value is not None
         }
