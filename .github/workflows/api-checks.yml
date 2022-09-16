@@ -42,9 +42,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Security Check
-        run: |
-          echo "Placeholder until security tools are installed"
-          exit 0
+        run: make lint-security
   test:
     needs: [lint, security]
     runs-on: ubuntu-latest
