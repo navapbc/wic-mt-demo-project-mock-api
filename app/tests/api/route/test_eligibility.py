@@ -1,4 +1,5 @@
 import faker
+
 from api.db.models.eligibility_models import EligibilityScreener
 
 fake = faker.Faker()
