@@ -47,7 +47,7 @@ Note this endpoint explicitly does not require authorization so it can be integr
 ![Example Response](/docs/app/images/healthcheck-response.png)
 
 ## Eligibility Screener
-[POST /v1/eligibility-screener](/app/api/route/eligibility.py) is and endpoint for submitting an eligibility screener record. On successful submission, an `EligibilityScreener` record will be created in our database which will later be used to generate an [eligibility screener CSV](/app/api/scripts/create_eligibility_screener_csv.py).
+[POST /v1/eligibility-screener](/app/api/route/eligibility.py) is an endpoint for submitting an eligibility screener record. On successful submission, an `EligibilityScreener` record will be created in our database which will later be used to generate an [eligibility screener CSV](/app/api/scripts/create_eligibility_screener_csv.py).
 
 ### Example Request
 ![Example Request](/docs/app/images/eligibility-screener-request.png)
