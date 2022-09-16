@@ -1,3 +1,24 @@
+"""
+create_eligibility_screener_csv.py
+
+Can be invoked via `make create-eligibility-screener-csv`
+
+Creates an eligibility screener CSV file which contains
+all eligibility screener records from the database that
+haven't previously been added to a CSV file generated
+which is determined by the `added_to_eligibility_screener_at`
+timestamp (set at the end of this script).
+
+Environment Variables:
+* Any related to setting up and interacting with the DB (same as rest of API)
+* ELIGIBILITY_SCREENER_CSV_OUTPUT_PATH which dictates where the
+        output file will be written and can be either a path on
+        local disk, or an S3 path.
+* ELIGIBILITY_SCREENER_TIMEZONE which dictates the timezone to write
+        timestamps to the output CSV. By default is in UTC, but
+        can be any timezone as described in pytz: http://pytz.sourceforge.net/
+"""
+
 import csv
 import os
 from dataclasses import asdict, dataclass
