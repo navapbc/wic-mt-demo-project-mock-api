@@ -10,7 +10,7 @@ APP_NAME := main-app
 # Note that you can also change the LOG_FORMAT env var to switch
 # between JSON & human readable format. This is left in place
 # in the event JSON is output from a process we don't log.
-DECODE_LOG := 2>&1 | python3 -u api/logging/decodelog.py
+DECODE_LOG := 2>&1 | python3 -u api/logging/util/decodelog.py
 
 # A few commands need adjustments if they're run in CI, specify those here
 # TODO - when CI gets hooked up, actually test this.
@@ -24,11 +24,11 @@ else
  FLAKE8_FORMAT := default
 endif
 
-# By default, all python/poetry commands will run outside of the docker container
-# if you wish to run this differently, add PY_RUN_APPROACH=docker to your environment vars
-# You can set this by either running `export PY_RUN_APPROACH=docker` in your shell or add
+# By default, all python/poetry commands will run inside of the docker container
+# if you wish to run this natively, add PY_RUN_APPROACH=local to your environment vars
+# You can set this by either running `export PY_RUN_APPROACH=local` in your shell or add
 # it to your ~/.zshrc file (and run `source ~/.zshrc`)
-ifeq "$(PY_RUN_APPROACH)" "docker"
+ifeq "$(PY_RUN_APPROACH)" "local"
 PY_RUN_CMD := poetry run
 else
 PY_RUN_CMD := docker-compose run $(DOCKER_EXEC_ARGS) --rm $(APP_NAME) poetry run
@@ -103,6 +103,14 @@ MIGRATE_MERGE_MSG := Merge multiple heads
 db-migrate-merge-heads: ## Create a new migration that depends on all existing `head`s
 	$(alembic_cmd) merge heads -m "$(MIGRATE_MERGE_MSG)" $(args)
 
+db-migrate-current: ## Show current revision for a database
+	$(alembic_cmd) current $(args)
+
+db-migrate-history: ## Show migration history
+	$(alembic_cmd) history $(args)
+
+db-migrate-heads: ## Show migrations marked as a head
+	$(alembic_cmd) heads $(args)
 
 ##################################################
 # Testing
