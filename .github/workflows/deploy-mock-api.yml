@@ -32,5 +32,5 @@ jobs:
       - uses: rickstaa/action-create-tag@v1
         with:
           tag: ${{github.event.inputs.environment || 'test' }}
-          message: "Tag created in\n ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          message: "\nTag created in workflow\n${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
           force_push_tag: true
