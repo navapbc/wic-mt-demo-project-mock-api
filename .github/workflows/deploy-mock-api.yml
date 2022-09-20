@@ -34,5 +34,5 @@ jobs:
         # Running `git push --tags` may not be necessary, but we should test this. We want to be able to view tags that github creates by going to https://github.com/navapbc/wic-mt-demo-project-eligibility-screener/tags
         # Not sure if we are able to do a `git push --tags` from inside the container job thing
         run: |
-          git tag -a ${{github.event.inputs.environment || 'test' }} -m TODO dummy message
+          git tag -a ${{github.event.inputs.environment || 'test' }} -m "TODO dummy message"
           git push --tags
