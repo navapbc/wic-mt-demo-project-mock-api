@@ -85,8 +85,12 @@ NETWORK_CONFIG=$(jq \
      .awsvpcConfiguration.subnets=$SUBNETS' \
     $DIR/network_config.json.tpl)
 
-# Use the container override file as-is
-OVERRIDES=$(jq . $DIR/container_overrides.json.tpl)
+# Set the name of the container
+CONTAINER_NAME="$ENV_NAME-mock-api-container"
+OVERRIDES=$(jq \
+    --arg CONTAINER_NAME "$CONTAINER_NAME" \
+    '.containerOverrides[0].name=$CONTAINER_NAME' \
+    $DIR/container_overrides.json.tpl)
 
 # Build the ECS run-task command
 AWS_ARGS=("--region=us-east-1"

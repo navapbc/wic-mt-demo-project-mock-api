@@ -1,7 +1,7 @@
 {
   "containerOverrides": [
     {
-        "name": "test-mock-api-container",
+        "name": "PLACEHOLDER OVERRIDEN BY SCRIPT  - SEE README FOR HOW THIS GETS SET",
         "environment": [
             {
                 "name":"LOG_FORMAT",
