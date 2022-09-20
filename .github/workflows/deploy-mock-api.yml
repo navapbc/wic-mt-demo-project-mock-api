@@ -2,6 +2,7 @@
 # - Build and tag a docker release image
 # - Upload the docker image to ECR
 # - Trigger a rotation of the ECS service containers
+# - Automatically tag the branch with the environment name
 #
 # The underlying terraform is managed in the wic-mt-demo-project repo and references the uploaded docker image.
 
