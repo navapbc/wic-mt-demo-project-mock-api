@@ -51,6 +51,7 @@ jobs:
 
   create-tag:
     needs: [build]
+    name: Create Github Tag
     runs-on: ubuntu-latest
 
     steps:
