@@ -30,21 +30,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Authenticate with AWS
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-region: us-east-1
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          role-to-assume: arn:aws:iam::546642427916:role/deployment-action
-          role-duration-seconds: 3600
-
-      - name: Build and Tag Image
+      - name: Tag commit
+        # Running `git push --tags` may not be necessary, but we should test this. We want to be able to view tags that github creates by going to https://github.com/navapbc/wic-mt-demo-project-eligibility-screener/tags
+        # Not sure if we are able to do a `git push --tags` from inside the container job thing
         run: |
-          docker build --tag 546642427916.dkr.ecr.us-east-1.amazonaws.com/mock-api-repo:latest ./app
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 546642427916.dkr.ecr.us-east-1.amazonaws.com/mock-api-repo
-          docker push 546642427916.dkr.ecr.us-east-1.amazonaws.com/mock-api-repo:latest
-
-      - name: Push to ECR
-        run: |
-          aws ecs update-service --cluster ${{github.event.inputs.environment || 'test' }} --service ${{github.event.inputs.environment || 'test' }}-api-ecs-service --force-new-deployment
+          git tag -a ${{github.event.inputs.environment || 'test' }} -m TODO dummy message
+          git push --tags
