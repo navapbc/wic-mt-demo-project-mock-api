@@ -21,7 +21,6 @@ env:
   # and add additional parameters to the commands called
   CI: true
 
-# this workflow should be updated/merged when WMDP-123. etc are merged
 jobs:
   lint:
     runs-on: ubuntu-latest
