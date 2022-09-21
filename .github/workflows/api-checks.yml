@@ -6,33 +6,50 @@ on:
       - main
     paths:
       - app/**
-# this workflow should be updated/merged when WMDP-123. etc are merged
+      - .github/workflows/api-checks.yml
+  pull_request:
+    paths:
+      - app/**
+      - .github/workflows/api-checks.yml
+
+defaults:
+  run:
+    working-directory: ./app
+
+env:
+  # Some commands in the Makefile check if this is set
+  # and add additional parameters to the commands called
+  CI: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: Run Linting
-        run: |
-          echo "Placeholder until linting is installed"
-          exit 0
+      - name: build container
+        run: make build
+
+      - name: Run format check
+        run: make format-check
+
+      - name: Run linting
+        run: make lint
   security:
-    runs-on: ubutntu-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
       - name: Security Check
-        run: |
-          echo "Placeholder until security tools are installed"
-          exit 0
+        run: make lint-security
   test:
     needs: [lint, security]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
+      - name: test for multi-headed migration situation
+        run: make test args="-x tests/api/db/test_migrations.py::test_only_single_head_revision_in_migrations" 
+
       - name: Start tests
-        run: |
-          echo "Placeholder until tests are written"
-          exit 0
+        run: make test-coverage
