@@ -98,12 +98,7 @@ components:
           type: array
           items:
             type: string
-            enum:
-              - "pregnant"
-              - "baby"
-              - "guardian"
-              - "loss"
-          example: ["pregnant"]
+          example: ["I'm pregnant"]
           description: The list of categories that make the applicant eligible
         has_prior_wic_enrollment:
           type: boolean
@@ -113,11 +108,7 @@ components:
           type: array
           items:
             type: string
-            enum:
-              - "insurance"
-              - "snap"
-              - "tanf"
-          example: ["insurance", "snap"]
+          example: ["SNAP (Supplemental Nutrition Assistance Program)", "TANF (Temporary Assistance for Needy Families)"]
           description: Other programs the applicant is already enrolled in
         household_size:
           type: integer

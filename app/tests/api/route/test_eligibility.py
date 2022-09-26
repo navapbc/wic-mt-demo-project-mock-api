@@ -8,9 +8,9 @@ base_request = {
     "first_name": fake.first_name(),
     "last_name": fake.last_name(),
     "phone_number": "123-456-7890",
-    "eligibility_categories": ["baby", "pregnant"],
+    "eligibility_categories": ["I'm pregnant", "I've had a baby in the past 12 months"],
     "has_prior_wic_enrollment": False,
-    "eligibility_programs": ["tanf"],
+    "eligibility_programs": ["TANF (Temporary Assistance for Needy Families)"],
     "household_size": None,
     "zip_code": "12345",
     "wic_clinic": "Example Clinic\n1234 Main Street Cityville, MT 12345",
@@ -143,38 +143,6 @@ def test_post_eligibility_400_invalid_types(client, api_auth_token, test_db_sess
     # Nothing added to DB
     results = test_db_session.query(EligibilityScreener).all()
     assert len(results) == 0
-
-
-def test_post_eligibility_400_invalid_enums(client, api_auth_token, test_db_session):
-    request = base_request | {
-        "eligibility_categories": ["abcdef", "ghij"],
-        "eligibility_programs": ["klmno"],
-    }
-    response = client.post(
-        "/v1/eligibility-screener", json=request, headers={"X-Auth": api_auth_token}
-    )
-
-    assert response.status_code == 400
-    error_list = response.get_json()["errors"]
-    # We expect the errors to be in a dict like:
-    # {
-    #   'field': 'eligibility_categories.0',
-    #   'message': "'abcdef' is not one of ['pregnant', 'baby', 'guardian', 'loss']",
-    #   'rule': ['pregnant', 'baby', 'guardian', 'loss'],
-    #   'type': 'enum',
-    #   'value': 'abcdef'
-    # }
-    assert len(error_list) == 3
-    for error in error_list:
-        field, message, error_type = error["field"], error["message"], error["type"]
-
-        assert field in [
-            "eligibility_categories.0",
-            "eligibility_categories.1",
-            "eligibility_programs.0",
-        ]
-        assert "is not one of" in message
-        assert error_type == "enum"
 
 
 def test_post_eligibility_401_unauthorized_token(client, api_auth_token, test_db_session):
