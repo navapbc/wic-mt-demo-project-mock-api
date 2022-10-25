@@ -55,7 +55,7 @@ jobs:
           SERVICE_ID=${{github.event.inputs.environment || 'test' }}-api-ecs-service
 
           # wait for ECS service to be stable
-          aws ecs wait services-stable --cluster $CLUSTER_ID --services $SERVICE_ID
+          aws ecs wait services-stable --cluster $CLUSTER_ARN --services $SERVICE_ID
 
   create-tag:
     needs: [build]
