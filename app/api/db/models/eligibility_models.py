@@ -30,6 +30,7 @@ class EligibilityScreener(Base, TimestampMixin):
     household_size: Optional[int] = Column(Integer, nullable=True)
     zip_code: str = Column(Text, nullable=False)
     wic_clinic: str = Column(Text, nullable=False)
+    wic_agency: str = Column(Text, nullable=False)
     applicant_notes: Optional[str] = Column(Text, nullable=True)
 
     added_to_eligibility_screener_at: Optional[datetime] = Column(

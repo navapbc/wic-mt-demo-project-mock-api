@@ -13,7 +13,8 @@ base_request = {
     "eligibility_programs": ["TANF (Temporary Assistance for Needy Families)"],
     "household_size": None,
     "zip_code": "12345",
-    "wic_clinic": "Example Clinic\n1234 Main Street Cityville, MT 12345",
+    "wic_clinic": "Example Clinic",
+    "wic_agency": "Example Agency",
     "applicant_notes": "example_notes",
 }
 
@@ -87,6 +88,7 @@ def test_post_eligibility_400_missing_required_fields(client, api_auth_token, te
         "has_prior_wic_enrollment",
         "zip_code",
         "wic_clinic",
+        "wic_agency",
     ]
     assert len(error_list) == len(
         required_fields
@@ -112,7 +114,9 @@ def test_post_eligibility_400_invalid_types(client, api_auth_token, test_db_sess
         "eligibility_programs": 6,
         "household_size": "text",
         "zip_code": 7,
-        "applicant_notes": 8,
+        "wic_clinic": 8,
+        "wic_agency": 9,
+        "applicant_notes": 10,
     }
     response = client.post(
         "/v1/eligibility-screener", json=request, headers={"X-Auth": api_auth_token}
