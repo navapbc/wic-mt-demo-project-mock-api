@@ -70,6 +70,7 @@ class EligibilityScreenerFactory(BaseFactory):
     eligibility_programs = ["tanf"]
     household_size = None
     zip_code = factory.Faker("postcode")
-    wic_clinic = "Example Clinic\n1234 Main Street Cityville, MT 12345"
+    wic_clinic = "Example Clinic"
+    wic_agency = "Example Agency"
     applicant_notes = factory.Sequence(lambda n: f"Notes #{n}")
     added_to_eligibility_screener_at = None

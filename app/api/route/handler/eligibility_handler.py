@@ -24,6 +24,7 @@ class EligibilityScreenerSharedParams(PydanticBaseModel):
     household_size: Optional[int]
     zip_code: str
     wic_clinic: str
+    wic_agency: str
     applicant_notes: Optional[str]
 
 
@@ -52,6 +53,7 @@ def create_eligibility_screener(api_context: ApiContext) -> EligibilityScreenerR
         household_size=request.household_size,
         zip_code=request.zip_code,
         wic_clinic=request.wic_clinic,
+        wic_agency=request.wic_agency,
         applicant_notes=request.applicant_notes,
     )
 
