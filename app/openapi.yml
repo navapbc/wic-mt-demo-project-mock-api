@@ -122,8 +122,12 @@ components:
           description: The ZIP code of the applicant
         wic_clinic:
           type: string
-          example: "BEAVERHEAD CPH WIC\n41 Barrett Street Dillon, MT 59725"
-          description: The full address of the chosen WIC clinic
+          example: "HARDIN WIC (BIG HORN)"
+          description: The name of the chosen WIC clinic
+        wic_agency:
+          type: string
+          example: "BIG HORN HEALTH DEPARTMENT"
+          description: The name of the agency for the chosen WIC clinic
         applicant_notes:
           type: string
           nullable: true

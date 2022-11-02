@@ -16,6 +16,7 @@ params = {
     "household_size": 3,
     "zip_code": "12345-6789",
     "wic_clinic": "example clinic",
+    "wic_agency": "example agency",
     "applicant_notes": "notes?",
 }
 
@@ -40,6 +41,8 @@ def validate_screener_record(screener, expected_values=None):
         assert screener.eligibility_programs is not None and len(screener.eligibility_programs) > 0
         assert screener.household_size is None  # The default
         assert screener.zip_code is not None
+        assert screener.wic_clinic is not None
+        assert screener.wic_agency is not None
         assert screener.applicant_notes is not None
 
 
