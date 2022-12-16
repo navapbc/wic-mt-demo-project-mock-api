@@ -32,3 +32,6 @@ A very simple [docker-compose.yml](./docker-compose.yml) has been included to su
 4. Navigate to `localhost:8080/v1/docs` to access the Swagger UI.
 5. Run `make run-logs` to see the logs of the running API container
 6. Run `make stop` when you are done to delete the container.
+
+## Disclaimer
+This public repository exists purely for the purposes of hosting a snapshot of code to serve as a reference for similar efforts and is therefore not actively maintained. Entities wishing to use this code should do standard security due diligence and make sure to use up-to-date dependencies.
