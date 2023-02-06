@@ -4,3 +4,10 @@
 
 # IDE-specific files
 .vscode/*
+
+# Local .terraform metadata
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
