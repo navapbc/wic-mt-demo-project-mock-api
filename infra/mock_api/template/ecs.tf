@@ -6,14 +6,14 @@ locals {
 # Load Balancing
 #
 # ---------------------------------------
-data "aws_security_group" "allow-lb-traffic" {
+data "aws_security_group" "allow_lb_traffic" {
   name = "screener_load_balancer_sg"
 }
 resource "aws_lb" "mock_api" {
   name               = "${var.environment_name}-mock-api-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [data.aws_security_group.allow-lb-traffic.id]
+  security_groups    = [data.aws_security_group.allow_lb_traffic.id]
   subnets = [
     "subnet-05b0618f4ef1a808c",
     "subnet-06067596a1f981034",
@@ -39,7 +39,7 @@ resource "aws_lb_target_group" "mock_api" {
   }
 }
 
-resource "aws_lb_listener" "screener" {
+resource "aws_lb_listener" "mock_api" {
   load_balancer_arn = aws_lb.mock_api.arn
   port              = 80
   protocol          = "HTTP"
@@ -48,11 +48,11 @@ resource "aws_lb_listener" "screener" {
     target_group_arn = aws_lb_target_group.mock_api.arn
   }
 }
-data "aws_ecr_repository" "mock-api-repository" {
+data "aws_ecr_repository" "mock_api_repository" {
   name = "mock-api-repo"
 }
 
-data "aws_iam_policy_document" "ecr-perms" {
+data "aws_iam_policy_document" "ecr_perms" {
   statement {
     sid = "ECRPerms"
     actions = [
@@ -73,9 +73,9 @@ data "aws_iam_policy_document" "ecr-perms" {
   }
 }
 
-resource "aws_ecr_repository_policy" "mock-api-repo-policy" {
-  repository = data.aws_ecr_repository.mock-api-repository.name
-  policy     = data.aws_iam_policy_document.ecr-perms.json
+resource "aws_ecr_repository_policy" "mock_api_repo_policy" {
+  repository = data.aws_ecr_repository.mock_api_repository.name
+  policy     = data.aws_iam_policy_document.ecr_perms.json
 }
 
 
@@ -86,12 +86,12 @@ resource "aws_ecs_cluster" "mock-api-ecs-cluster" {
 resource "aws_ecs_service" "mock-api-ecs-service" {
   name            = "${var.environment_name}-api-ecs-service"
   cluster         = aws_ecs_cluster.mock-api-ecs-cluster.id
-  task_definition = aws_ecs_task_definition.mock-api-ecs-task-definition.arn
+  task_definition = aws_ecs_task_definition.mock_api_ecs_task_definition.arn
   launch_type     = "FARGATE"
   network_configuration {
     subnets          = ["subnet-06b4ec8ff6311f69d"]
     assign_public_ip = true
-    security_groups  = [aws_security_group.allow-api-traffic.id]
+    security_groups  = [aws_security_group.allow_api_traffic.id]
   }
   desired_count = 1
 
@@ -108,7 +108,7 @@ resource "aws_ecs_service" "mock-api-ecs-service" {
   }
 }
 
-resource "aws_security_group" "allow-api-traffic" {
+resource "aws_security_group" "allow_api_traffic" {
   name        = "allow_api_traffic"
   description = "This rule blocks all traffic unless it is HTTPS for the eligibility screener"
   vpc_id      = module.constants.vpc_id
@@ -119,7 +119,7 @@ resource "aws_security_group" "allow-api-traffic" {
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
-    security_groups = [data.aws_security_group.allow-lb-traffic.id]
+    security_groups = [data.aws_security_group.allow_lb_traffic.id]
   }
 
   egress {
@@ -138,7 +138,7 @@ resource "aws_security_group" "allow-api-traffic" {
 data "aws_cloudwatch_log_group" "mock_api" {
   name = "mock-api"
 }
-resource "aws_ecs_task_definition" "mock-api-ecs-task-definition" {
+resource "aws_ecs_task_definition" "mock_api_ecs_task_definition" {
   family                   = "${var.environment_name}-api-task-definition"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -223,20 +223,20 @@ data "aws_iam_policy_document" "task_assume_role_policy" {
     }
   }
 }
-resource "aws_iam_role" "handle-csv" {
+resource "aws_iam_role" "handle_csv" {
   name               = "handle-csv-role"
   description        = "allows an ECS task to generate CSVs and manage their storage"
   assume_role_policy = data.aws_iam_policy_document.task_assume_role_policy.json
 }
-resource "aws_iam_role_policy_attachment" "handle-csv" {
-  policy_arn = aws_iam_policy.handle-csv.arn
-  role       = aws_iam_role.handle-csv.name
+resource "aws_iam_role_policy_attachment" "handle_csv" {
+  policy_arn = aws_iam_policy.handle_csv.arn
+  role       = aws_iam_role.handle_csv.name
 }
-resource "aws_iam_policy" "handle-csv" {
+resource "aws_iam_policy" "handle_csv" {
   name   = "handle-csv"
-  policy = data.aws_iam_policy_document.handle-csv.json
+  policy = data.aws_iam_policy_document.handle_csv.json
 }
-data "aws_iam_policy_document" "handle-csv" {
+data "aws_iam_policy_document" "handle_csv" {
   statement {
     sid    = "AllowListBucket"
     effect = "Allow"
@@ -246,11 +246,11 @@ data "aws_iam_policy_document" "handle-csv" {
       "s3:ListBucket",
       "s3:PutObject"
     ]
-    resources = ["${aws_s3_bucket.wic-mt-csv-files.arn}", "${aws_s3_bucket.wic-mt-csv-files.arn}/*"]
+    resources = ["${aws_s3_bucket.wic_mt_csv_files.arn}", "${aws_s3_bucket.wic_mt_csv_files.arn}/*"]
   }
 }
 
-resource "aws_security_group" "handle-csv" {
+resource "aws_security_group" "handle_csv" {
   description = "allows connections for the csv generation ecs task"
   name        = "ecs-task-security-group"
   vpc_id      = module.constants.vpc_id
@@ -259,7 +259,7 @@ resource "aws_security_group" "handle-csv" {
     from_port       = 5432
     to_port         = 5432
     protocol        = "tcp"
-    security_groups = ["${aws_security_group.allow-api-traffic.id}"]
+    security_groups = ["${aws_security_group.allow_api_traffic.id}"]
   }
   egress {
     description      = "allow all outbound traffic"
@@ -273,13 +273,13 @@ resource "aws_security_group" "handle-csv" {
     create_before_destroy = true
   }
 }
-resource "aws_ecs_task_definition" "handle-csv" {
+resource "aws_ecs_task_definition" "handle_csv" {
   family                   = "${var.environment_name}-csv-handler-definition"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   memory                   = "1024"
   cpu                      = "512"
-  task_role_arn            = aws_iam_role.handle-csv.arn
+  task_role_arn            = aws_iam_role.handle_csv.arn
   execution_role_arn       = "arn:aws:iam::546642427916:role/wic-mt-task-executor"
   container_definitions = jsonencode([
     {
@@ -327,7 +327,7 @@ resource "aws_ecs_task_definition" "handle-csv" {
         },
         {
           "name" : "ELIGIBILITY_SCREENER_CSV_OUTPUT_PATH"
-          "value" : "s3://${aws_s3_bucket.wic-mt-csv-files.id}"
+          "value" : "s3://${aws_s3_bucket.wic_mt_csv_files.id}"
         }
       ]
       logConfiguration = {
